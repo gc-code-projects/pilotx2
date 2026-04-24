@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Interactive Quiz</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; margin: 0; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .back-button { background-color: #2196f3; color: white; border: none; padding: 10px 30px; font-size: 1em; border-radius: 50px; cursor: pointer; transition: background-color 0.3s ease; margin-bottom: 20px; }
+        .back-button:hover { background-color: #1976d2; }
+        .quiz-container { max-width: 600px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .question-block { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .options-list { list-style: none; padding: 0; }
+        .option { margin: 8px 0; display: flex; align-items: center; cursor: pointer; }
+        .option input[type="radio"] { margin-right: 10px; }
+        .explanation { margin-top: 10px; padding: 10px; background: #e7f3ff; border-left: 4px solid #2196f3; display: none; font-size: 0.9em; }
+        button { background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #45a049; }
+        .correct { color: green; font-weight: bold; }
+        .incorrect { color: red; font-weight: bold; }
+        #results { margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-button" onclick="window.location.href='/time-travel-scenario'">← 返回</button>
+        <div style="display: flex; gap: 10px; margin: 10px 0;">
+            <button onclick="downloadQuiz()" style="background-color: #2196f3; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">下载题目</button>
+            <button onclick="document.getElementById('file-input').click()" style="background-color: #ff9800; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">上传题目</button>
+            <input type="file" id="file-input" accept=".json" style="display: none;">
+        </div>
+        
+        <div class="quiz-container">
+            <h1>穿越知识测验</h1>
+            <div id="progress" style="margin-bottom: 15px; font-weight: bold;"></div>
+            <div id="quiz-load">Loading questions...</div>
+            <hr>
+            <button id="submit-btn" style="display:none;">提交</button>
+            <div id="results" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        let quizData = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+
+        // Fetch the JSON file
+        fetch('/download-quiz')
+            .then(response => response.json())
+            .then(data => {
+                quizData = data;
+                renderCurrentQuestion();
+            })
+            .catch(err => {
+                document.getElementById('quiz-load').innerHTML = "Error loading questions.";
+                console.error(err);
+            });
+
+        function renderCurrentQuestion() {
+            const container = document.getElementById('quiz-load');
+            container.innerHTML = '';
+            
+            if (currentQuestionIndex >= quizData.length) {
+                // All questions completed - show all questions for review
+                renderAllQuestions();
+                return;
+            }
+            
+            const item = quizData[currentQuestionIndex];
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question-block';
+            
+            let optionsHTML = '';
+            item.options.forEach((opt, i) => {
+                optionsHTML += `
+                    <label class="option">
+                        <input type="radio" name="question" value="${i}">
+                        ${opt}
+                    </label>`;
+            });
+
+            qDiv.innerHTML = `
+                <p><strong>${item.question}</strong></p>
+                <div class="options-list">${optionsHTML}</div>
+                <div id="feedback" class="explanation"></div>
+            `;
+            container.appendChild(qDiv);
+            document.getElementById('submit-btn').style.display = 'block';
+            document.getElementById('progress').textContent = `问题 ${currentQuestionIndex + 1} / ${quizData.length}`;
+        }
+
+        function renderAllQuestions() {
+            const container = document.getElementById('quiz-load');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <h2 style="color: #4CAF50;">🎉 恭喜完成！</h2>
+                    <p>你已经正确回答了所有 ${quizData.length} 个问题！</p>
+                    <button onclick="restartQuiz()" style="margin-top: 10px; margin-bottom: 20px;">重新开始</button>
+                </div>
+                <hr>
+            `;
+            
+            quizData.forEach((item, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'question-block';
+                
+                let optionsHTML = '';
+                item.options.forEach((opt, i) => {
+                    const isSelected = userAnswers[index] === i ? 'checked' : '';
+                    const isCorrect = i === item.answer;
+                    const style = isCorrect ? 'style="color: green; font-weight: bold;"' : '';
+                    optionsHTML += `
+                        <label class="option" ${style}>
+                            <input type="radio" disabled ${isSelected}>
+                            ${opt}
+                            ${isCorrect ? ' ✓' : ''}
+                        </label>`;
+                });
+
+                qDiv.innerHTML = `
+                    <p><strong>${index + 1}. ${item.question}</strong></p>
+                    <div class="options-list">${optionsHTML}</div>
+                    <div class="explanation" style="display: block;">
+                        <span class="correct">正确！ </span>${item.explanation}
+                    </div>
+                `;
+                container.appendChild(qDiv);
+            });
+            
+            document.getElementById('submit-btn').style.display = 'none';
+            document.getElementById('progress').style.display = 'none';
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            renderCurrentQuestion();
+            document.getElementById('progress').style.display = 'block';
+            document.getElementById('submit-btn').style.display = 'block';
+        }
+
+        // 下载题目
+        function downloadQuiz() {
+            if (quizData.length > 0) {
+                const jsonStr = JSON.stringify(quizData, null, 2);
+                const blob = new Blob([jsonStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'quiz-data.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } else {
+                alert('没有可下载的题目数据');
+            }
+        }
+
+        // 上传题目
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const uploadedData = JSON.parse(event.target.result);
+                        // 验证数据格式
+                        if (Array.isArray(uploadedData) && uploadedData.every(item => 
+                            item.question && Array.isArray(item.options) && typeof item.answer === 'number'
+                        )) {
+                            quizData = uploadedData;
+                            currentQuestionIndex = 0;
+                            userAnswers = [];
+                            renderCurrentQuestion();
+                            alert('题目上传成功！');
+                        } else {
+                            alert('无效的题目数据格式');
+                        }
+                    } catch (e) {
+                        alert('解析JSON文件失败');
+                        console.error('Error parsing JSON:', e);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        document.getElementById('submit-btn').addEventListener('click', () => {
+            const selected = document.querySelector(`input[name="question"]:checked`);
+            const feedbackDiv = document.getElementById('feedback');
+            
+            if (!selected) {
+                feedbackDiv.style.display = 'block';
+                feedbackDiv.innerHTML = '<span class="incorrect">请选择一个答案！</span>';
+                return;
+            }
+
+            const item = quizData[currentQuestionIndex];
+            userAnswers[currentQuestionIndex] = parseInt(selected.value);
+            feedbackDiv.style.display = 'block';
+
+            if (parseInt(selected.value) === item.answer) {
+                feedbackDiv.innerHTML = `<span class="correct">正确！ </span>${item.explanation}`;
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    renderCurrentQuestion();
+                }, 1500);
+            } else {
+                feedbackDiv.innerHTML = `<span class="incorrect">错误！ </span>${item.explanation}`;
+            }
+        });
+    </script>
+
+</body>
+</html>

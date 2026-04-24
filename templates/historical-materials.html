@@ -1,0 +1,2630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>素材库 - AI备课助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* 顶部导航栏 */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 0 20px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2196f3;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #2196f3;
+        }
+        
+        .nav-link.active {
+            color: #2196f3;
+            font-weight: 600;
+            border-bottom: 2px solid #2196f3;
+        }
+        
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .help-link, .user-profile {
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* 主容器 */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+        
+        /* 左侧边栏 */
+        .sidebar {
+            width: 200px;
+            background-color: white;
+            box-shadow: 2px 0 4px rgba(0,0,0,0.05);
+            padding: 20px 0;
+            min-height: 800px;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+        
+        .sidebar-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #999;
+            padding: 0 20px 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .sidebar-links {
+            list-style: none;
+        }
+        
+        .sidebar-link {
+            padding: 10px 20px;
+            color: #666;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-link:hover {
+            background-color: #f5f7fa;
+            color: #2196f3;
+        }
+        
+        .sidebar-link.active {
+            background-color: #e3f2fd;
+            color: #2196f3;
+            border-left-color: #2196f3;
+            font-weight: 500;
+        }
+        
+        .upload-section {
+            padding: 20px;
+            background-color: #f8f9fa;
+            margin: 0 20px 20px;
+            border-radius: 8px;
+        }
+        
+        .upload-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .upload-description {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .upload-button {
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        
+        .upload-button:hover {
+            background-color: #1976d2;
+        }
+        
+        /* 主内容区 */
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .page-header {
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .page-description {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* 搜索和筛选 */
+        .search-filter {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+        
+        .search-input input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .search-input .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        
+        .filter-selects {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-select {
+            position: relative;
+        }
+        
+        .filter-select select {
+            padding: 10px 30px 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        .filter-button {
+            padding: 10px 15px;
+            background-color: #f5f7fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-button:hover {
+            background-color: #e0e0e0;
+        }
+        
+        /* 推荐资源 */
+        .recommended-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .recommended-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        
+        .resource-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .resource-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .resource-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .resource-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .resource-info h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+        
+        .resource-info p {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .resource-description {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .resource-actions {
+            display: flex;
+            gap: 10px;
+            font-size: 12px;
+        }
+        
+        .action-link {
+            color: #2196f3;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .action-link:hover {
+            background-color: #e3f2fd;
+        }
+        
+        /* 资源列表 */
+        .resources-section {
+            margin-bottom: 30px;
+        }
+        
+        .resources-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .tab-button {
+            padding: 8px 16px;
+            background-color: #f5f7fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            background-color: #2196f3;
+            color: white;
+            border-color: #2196f3;
+        }
+        
+        .resources-table {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            background-color: #f5f7fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+            font-weight: 600;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .table-row {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+            align-items: center;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .table-row:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        
+        .resource-name {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .resource-type {
+            color: #2196f3;
+            font-size: 12px;
+            background-color: #e3f2fd;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* 分页 */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 20px;
+        }
+        
+        .page-button {
+            padding: 6px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .page-button:hover {
+            border-color: #2196f3;
+            color: #2196f3;
+        }
+        
+        .page-button.active {
+            background-color: #2196f3;
+            color: white;
+            border-color: #2196f3;
+        }
+        
+        /* 右侧详情面板 */
+        .detail-panel {
+            width: 320px;
+            background-color: white;
+            box-shadow: -2px 0 4px rgba(0,0,0,0.05);
+            padding: 20px;
+            min-height: 800px;
+            overflow-y: auto;
+        }
+        
+        .detail-header {
+            margin-bottom: 20px;
+        }
+        
+        .detail-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .detail-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .detail-section {
+            margin-bottom: 20px;
+        }
+        
+        .detail-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .detail-content {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .detail-info {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .detail-info-item {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .detail-info-label {
+            color: #999;
+        }
+        
+        .detail-actions {
+            margin-top: 30px;
+        }
+        
+        .detail-button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+        
+        .download-button {
+            background-color: #2196f3;
+            color: white;
+        }
+        
+        .download-button:hover {
+            background-color: #1976d2;
+        }
+        
+        .analysis-button {
+            background-color: #f5f7fa;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .analysis-button:hover {
+            background-color: #e0e0e0;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .detail-panel {
+                width: 280px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 180px;
+            }
+            
+            .detail-panel {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .search-filter {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-input {
+                min-width: auto;
+            }
+            
+            .filter-selects {
+                justify-content: space-between;
+            }
+        }
+        
+        /* 关于我们页面样式 */
+        .about-page {
+            min-height: calc(100vh - 60px);
+            background-color: #f5f7fa;
+            padding: 40px 20px;
+        }
+        
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .about-header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        .about-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 200"><path d="M0,100 Q300,50 600,100 T1200,100 L1200,200 L0,200 Z" fill="%23e3f2fd" opacity="0.5"/></svg>');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+            border-radius: 20px;
+        }
+        
+        .about-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            padding-top: 40px;
+        }
+        
+        .about-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+        
+        .about-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .about-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .about-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .about-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+        
+        .about-card-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 20px;
+        }
+        
+        .about-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .about-card-divider {
+            width: 40px;
+            height: 3px;
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+        
+        .about-card-content {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .about-card-footer {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .special-thanks {
+            background-color: #fff3f3;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 60px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        .special-thanks-icon {
+            flex-shrink: 0;
+        }
+        
+        .heart-icon {
+            font-size: 64px;
+        }
+        
+        .special-thanks-content {
+            flex: 1;
+        }
+        
+        .special-thanks-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .special-thanks-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .open-source {
+            background-color: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 60px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .open-source-content {
+            flex: 1;
+        }
+        
+        .open-source-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .open-source-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .contact-button {
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .contact-button:hover {
+            background-color: #1976d2;
+        }
+        
+        .open-source-illustration {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .handshake-icon {
+            font-size: 48px;
+        }
+        
+        .code-icon {
+            font-size: 32px;
+            color: #666;
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .back-home {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .back-home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: white;
+            color: #333;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .back-home-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        
+        .about-footer {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #e0e0e0;
+            font-size: 14px;
+            color: #999;
+        }
+        
+        @media (max-width: 768px) {
+            .about-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .special-thanks {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .open-source {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .open-source-illustration {
+                order: -1;
+            }
+        }
+        
+        /* 生成活动页面样式 */
+        .generate-page {
+            min-height: calc(100vh - 60px);
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+        
+        .generate-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .generate-header {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .back-home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .generate-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2196f3;
+            margin-bottom: 10px;
+        }
+        
+        .generate-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .process-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        
+        .process-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background-color: #e0e0e0;
+            z-index: 1;
+        }
+        
+        .process-step.active::after {
+            background-color: #2196f3;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto 10px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .process-step.active .step-number {
+            background-color: #2196f3;
+            color: white;
+        }
+        
+        .step-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .step-description {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .generate-content {
+            margin-bottom: 30px;
+        }
+        
+        .main-sections {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .section-icon {
+            font-size: 20px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+        }
+        
+        .section-subtitle {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .section-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #4caf50;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #4caf50;
+        }
+        
+        .clear-button {
+            background: none;
+            border: 1px solid #e0e0e0;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+        }
+        
+        .section-content {
+            margin-top: 20px;
+        }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background-color: #f5f7fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .file-icon {
+            font-size: 24px;
+        }
+        
+        .file-details {
+            flex: 1;
+        }
+        
+        .file-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .file-size {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .file-action {
+            background: none;
+            border: 1px solid #e0e0e0;
+            padding: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .material-content {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .reupload-button {
+            background-color: #f5f7fa;
+            border: 1px solid #e0e0e0;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+        }
+        
+        .analysis-item {
+            margin-bottom: 15px;
+        }
+        
+        .analysis-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #999;
+            margin-bottom: 5px;
+        }
+        
+        .analysis-value {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .keyword-tag {
+            display: inline-block;
+            background-color: #e3f2fd;
+            color: #2196f3;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .analysis-form {
+            margin-bottom: 20px;
+        }
+        
+        .form-item {
+            margin-bottom: 15px;
+        }
+        
+        .form-item label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #999;
+            margin-bottom: 5px;
+        }
+        
+        .form-item input,
+        .form-item textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .form-item textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-tip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #999;
+            background-color: #f5f7fa;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .comparison-section {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .comparison-content {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .comparison-card {
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .comparison-card.blue {
+            background-color: #f0f8ff;
+            border-left: 4px solid #1e90ff;
+        }
+        
+        .comparison-card.orange {
+            background-color: #fffaf0;
+            border-left: 4px solid #ff8c00;
+        }
+        
+        .comparison-card.purple {
+            background-color: #f8f0ff;
+            border-left: 4px solid #9370db;
+        }
+        
+        .comparison-card.green {
+            background-color: #f0fff0;
+            border-left: 4px solid #32cd32;
+        }
+        
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .card-content textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+            resize: vertical;
+            min-height: 80px;
+            margin-bottom: 10px;
+        }
+        
+        .conclusion-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .card-tip {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .comparison-actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .generate-report-button {
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 auto;
+        }
+        
+        .tip-section {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .tip-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .tip-content {
+            flex: 1;
+            font-size: 14px;
+            color: #856404;
+            line-height: 1.4;
+        }
+        
+
+        
+        @media (max-width: 1200px) {
+            .main-sections {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .process-steps {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .process-step:not(:last-child)::after {
+                display: none;
+            }
+            
+            .generate-header {
+                padding: 20px;
+            }
+            
+            .generate-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-left">
+            <div class="logo">
+                <span>🤖</span>
+                <span>AI备课助手</span>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">首页</a>
+                <a href="#" class="nav-link" id="generate-tab">生成活动</a>
+                <a href="/historical-materials" class="nav-link active">素材库</a>
+                <a href="#" class="nav-link" id="about-tab">关于我们</a>
+                <a href="#" class="nav-link">我的资源</a>
+            </div>
+        </div>
+        <div class="navbar-right">
+            <a href="#" class="help-link">
+                <span>📖</span>
+                <span>使用指南</span>
+            </a>
+            <a href="#" class="user-profile">
+                <span>👤</span>
+                <span>王老师</span>
+            </a>
+        </div>
+    </nav>
+    
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 左侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">资源分类</div>
+                <ul class="sidebar-links">
+                    <li><a href="#" class="sidebar-link active">全部资源</a></li>
+                    <li><a href="#" class="sidebar-link">历史文献</a></li>
+                    <li><a href="#" class="sidebar-link">课件资源</a></li>
+                    <li><a href="#" class="sidebar-link">教学活动</a></li>
+                    <li><a href="#" class="sidebar-link">图表资料</a></li>
+                    <li><a href="#" class="sidebar-link">拓展阅读</a></li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">热门主题</div>
+                <ul class="sidebar-links">
+                    <li><a href="#" class="sidebar-link">秦汉时期</a></li>
+                    <li><a href="#" class="sidebar-link">唐宋时期</a></li>
+                    <li><a href="#" class="sidebar-link">宋元时期</a></li>
+                    <li><a href="#" class="sidebar-link">明清时期</a></li>
+                    <li><a href="#" class="sidebar-link">近代史</a></li>
+                    <li><a href="#" class="sidebar-link">世界史</a></li>
+                    <li><a href="#" class="sidebar-link">制度变迁</a></li>
+                    <li><a href="#" class="sidebar-link">经济发展</a></li>
+                </ul>
+            </div>
+            
+            <div class="upload-section">
+                <div class="upload-title">上传资源，共建共享</div>
+                <div class="upload-description">分享优质教学资源，与更多老师共同成长</div>
+                <button class="upload-button">上传资源</button>
+            </div>
+        </div>
+        
+        <!-- 主内容区 -->
+        <main class="content">
+            <div class="page-header">
+                <h1 class="page-title">素材库</h1>
+                <p class="page-description">精选教学资源，一键下载用于生成活动，助力高效备课与课堂教学</p>
+            </div>
+            
+            <!-- 搜索和筛选 -->
+            <div class="search-filter">
+                <div class="search-input">
+                    <input type="text" placeholder="搜索素材名、关键词、朝代、主题等">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <div class="filter-selects">
+                    <div class="filter-select">
+                        <select>
+                            <option>全部类型</option>
+                            <option>历史文献</option>
+                            <option>课件资源</option>
+                            <option>教学活动</option>
+                        </select>
+                    </div>
+                    <div class="filter-select">
+                        <select>
+                            <option>全部朝代</option>
+                            <option>秦汉</option>
+                            <option>唐宋</option>
+                            <option>元明清</option>
+                        </select>
+                    </div>
+                    <div class="filter-select">
+                        <select>
+                            <option>全部主题</option>
+                            <option>政治制度</option>
+                            <option>经济发展</option>
+                            <option>文化艺术</option>
+                        </select>
+                    </div>
+                    <button class="filter-button">
+                        <span>⚙️</span>
+                        <span>筛选</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 推荐资源 -->
+            <div class="recommended-section">
+                <div class="section-header">
+                    <h2 class="section-title">推荐资源</h2>
+                </div>
+                <div class="recommended-grid">
+                    <div class="resource-card">
+                        <div class="resource-header">
+                            <div class="resource-icon" style="background-color: #e3f2fd; color: #2196f3;">
+                                📜
+                            </div>
+                            <div class="resource-info">
+                                <h3>史记·秦始皇本纪选段</h3>
+                                <p>历史文献</p>
+                            </div>
+                        </div>
+                        <p class="resource-description">司马迁《史记》中关于秦始皇统一六国的记载选段，适合用于史料分析与课堂讲解。</p>
+                        <div class="resource-actions">
+                            <a href="#" class="action-link">预览</a>
+                            <a href="#" class="action-link">下载</a>
+                            <a href="#" class="action-link">用于分析</a>
+                        </div>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <div class="resource-header">
+                            <div class="resource-icon" style="background-color: #e8f5e8; color: #4caf50;">
+                                📊
+                            </div>
+                            <div class="resource-info">
+                                <h3>唐代租庸调制课件</h3>
+                                <p>课件资源</p>
+                            </div>
+                        </div>
+                        <p class="resource-description">唐代赋税制度租庸调制的详细讲解课件，内容包括制度背景、内容与影响。</p>
+                        <div class="resource-actions">
+                            <a href="#" class="action-link">预览</a>
+                            <a href="#" class="action-link">下载</a>
+                            <a href="#" class="action-link">用于课堂</a>
+                        </div>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <div class="resource-header">
+                            <div class="resource-icon" style="background-color: #fff3e0; color: #ff9800;">
+                                🎯
+                            </div>
+                            <div class="resource-info">
+                                <h3>宋代商业发展教学活动</h3>
+                                <p>教学活动</p>
+                            </div>
+                        </div>
+                        <p class="resource-description">基于史料的宋代商业发展探究活动设计与任务，培养学生的史料分析能力。</p>
+                        <div class="resource-actions">
+                            <a href="#" class="action-link">预览</a>
+                            <a href="#" class="action-link">下载</a>
+                            <a href="#" class="action-link">用于课堂</a>
+                        </div>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <div class="resource-header">
+                            <div class="resource-icon" style="background-color: #f3e5f5; color: #9c27b0;">
+                                📋
+                            </div>
+                            <div class="resource-info">
+                                <h3>明清教育专制强化表</h3>
+                                <p>图表资料</p>
+                            </div>
+                        </div>
+                        <p class="resource-description">明清时期教育专制强化的时间线与关键事件表，清晰展示其发展脉络。</p>
+                        <div class="resource-actions">
+                            <a href="#" class="action-link">预览</a>
+                            <a href="#" class="action-link">下载</a>
+                            <a href="#" class="action-link">用于课堂</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 资源列表 -->
+            <div class="resources-section">
+                <div class="section-header">
+                    <h2 class="section-title">最新资源</h2>
+                    <div class="resources-tabs">
+                        <button class="tab-button active">最新资源</button>
+                        <button class="tab-button">最热下载</button>
+                        <button class="tab-button">精选资源</button>
+                        <div class="filter-select">
+                            <select>
+                                <option>按最新</option>
+                                <option>按热度</option>
+                                <option>按评分</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="resources-table">
+                    <div class="table-header">
+                        <div>资源名称</div>
+                        <div>类型</div>
+                        <div>朝代</div>
+                        <div>主题</div>
+                        <div>更新时间</div>
+                        <div>操作</div>
+                    </div>
+                    
+                    <div class="table-row">
+                        <div>
+                            <div class="resource-name">清末新政资料选编（节选）</div>
+                            <p style="font-size: 12px; color: #999; margin-top: 4px;">包含清末新政的背景、主要措施及其影响的资料选段，适合用于史料分析与课堂讲解。</p>
+                        </div>
+                        <div><span class="resource-type">历史文献</span></div>
+                        <div>清代</div>
+                        <div>政治制度</div>
+                        <div>2024-05-12</div>
+                        <div class="table-actions">
+                            <a href="#" class="action-link">预览</a>
+                            <a href="#" class="action-link">下载</a>
+                            <a href="#" class="action-link">...</a>
+                        </div>
+                    </div>
+                    
+                    <div class="table-row">
+                        <div>
+                            <div class="resource-name">三国隆中对策分析课件</div>
+                            <p style="font-size: 12px; color: #999; margin-top: 4px;">结合《隆中对》分析诸葛亮的战略思想，包含背景、内容与影响。</p>
+                        </div>
+                        <div><span class="resource-type">课件资源</span></div>
+                        <div>三国</div>
+                        <div>政治军事</div>
+                        <div>2024-05-10</div>
+                        <div class="table-actions">
+                            <a href="#" class="action-link">预览</a>
+                            <a href="#" class="action-link">下载</a>
+                            <a href="#" class="action-link">...</a>
+                        </div>
+                    </div>
+                    
+                    <div class="table-row">
+                        <div>
+                            <div class="resource-name">唐代科举制度探究活动</div>
+                            <p style="font-size: 12px; color: #999; margin-top: 4px;">基于史料的唐代科举制度探究活动设计与评价量表。</p>
+                        </div>
+                        <div><span class="resource-type">教学活动</span></div>
+                        <div>唐代</div>
+                        <div>选官制度</div>
+                        <div>2024-05-08</div>
+                        <div class="table-actions">
+                            <a href="#" class="action-link">预览</a>
+                            <a href="#" class="action-link">下载</a>
+                            <a href="#" class="action-link">...</a>
+                        </div>
+                    </div>
+                    
+                    <div class="table-row">
+                        <div>
+                            <div class="resource-name">中国古代经济发展时间轴</div>
+                            <p style="font-size: 12px; color: #999; margin-top: 4px;">从先秦到明清的经济发展关键事件时间轴。</p>
+                        </div>
+                        <div><span class="resource-type">图表资料</span></div>
+                        <div>先秦-明清</div>
+                        <div>经济发展</div>
+                        <div>2024-05-06</div>
+                        <div class="table-actions">
+                            <a href="#" class="action-link">预览</a>
+                            <a href="#" class="action-link">下载</a>
+                            <a href="#" class="action-link">...</a>
+                        </div>
+                    </div>
+                    
+                    <div class="table-row">
+                        <div>
+                            <div class="resource-name">世界近代史重要条约汇编</div>
+                            <p style="font-size: 12px; color: #999; margin-top: 4px;">近代史上重要国际条约的文本与背景资料。</p>
+                        </div>
+                        <div><span class="resource-type">拓展阅读</span></div>
+                        <div>近代</div>
+                        <div>国际关系</div>
+                        <div>2024-05-05</div>
+                        <div class="table-actions">
+                            <a href="#" class="action-link">预览</a>
+                            <a href="#" class="action-link">下载</a>
+                            <a href="#" class="action-link">...</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 分页 -->
+                <div class="pagination">
+                    <button class="page-button">‹</button>
+                    <button class="page-button active">1</button>
+                    <button class="page-button">2</button>
+                    <button class="page-button">3</button>
+                    <button class="page-button">4</button>
+                    <button class="page-button">5</button>
+                    <span>...</span>
+                    <button class="page-button">20</button>
+                    <button class="page-button">›</button>
+                </div>
+            </div>
+        </main>
+        
+        <!-- 右侧详情面板 -->
+        <div class="detail-panel">
+            <div class="detail-header">
+                <h3 class="detail-title">清末新政资料选编（节选）</h3>
+                <div class="detail-meta">
+                    <span>历史文献</span>
+                    <span>清代</span>
+                    <span>政治制度</span>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h4 class="detail-section-title">资源来源</h4>
+                <p class="detail-content">
+                    “...所以新政者，练兵、筹饷、变科举、兴学诸事，皆为自强之策...”——《清末新政上谕》（节选）
+                </p>
+            </div>
+            
+            <div class="detail-section">
+                <h4 class="detail-section-title">适用场景</h4>
+                <div class="detail-info">
+                    <div class="detail-info-item">
+                        <span class="detail-info-label">史料分析</span>
+                        <span>✓</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <span class="detail-info-label">历史参考</span>
+                        <span>✓</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <span class="detail-info-label">课堂讲解</span>
+                        <span>✓</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h4 class="detail-section-title">资源摘要</h4>
+                <p class="detail-content">
+                    本资料选编包含清末新政的背景、主要措施及其影响的核心内容，适合用于史料分析与课堂讲解，帮助学生理解清末改革的历史背景与意义。
+                </p>
+            </div>
+            
+            <div class="detail-section">
+                <h4 class="detail-section-title">文件信息</h4>
+                <div class="detail-info">
+                    <div class="detail-info-item">
+                        <span class="detail-info-label">格式：</span>
+                        <span>TXT</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <span class="detail-info-label">大小：</span>
+                        <span>12.5 KB</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <span class="detail-info-label">上传时间：</span>
+                        <span>2024-05-12</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <span class="detail-info-label">上传者：</span>
+                        <span>历史教师</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-actions">
+                <button class="detail-button download-button">📥 下载文件</button>
+                <button class="detail-button analysis-button">📝 用于史料分析</button>
+                <p style="font-size: 12px; color: #999; text-align: center; margin-top: 10px;">已被128位老师使用</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 关于我们页面 -->
+    <div class="about-page" id="about-page" style="display: none;">
+        <div class="about-container">
+            <div class="about-header">
+                <h1 class="about-title">致谢</h1>
+                <p class="about-subtitle">感谢所有支持本项目的老师、团队与参与者</p>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-cards">
+                    <div class="about-card">
+                        <div class="about-card-icon" style="background-color: #e3f2fd; color: #2196f3;">
+                            🏫
+                        </div>
+                        <h3 class="about-card-title">学校与指导老师</h3>
+                        <div class="about-card-divider" style="background-color: #2196f3;"></div>
+                        <p class="about-card-content">
+                            感谢贵州黔西南布依族苗族自治州贞丰县第二中学对本项目的支持与信任，以及在项目推进过程中给予的帮助。
+                        </p>
+                        <div class="about-card-footer">
+                            <span>👨‍🏫 指导老师：王莎老师</span>
+                        </div>
+                    </div>
+                    
+                    <div class="about-card">
+                        <div class="about-card-icon" style="background-color: #e8f5e8; color: #4caf50;">
+                            🎓
+                        </div>
+                        <h3 class="about-card-title">项目团队</h3>
+                        <div class="about-card-divider" style="background-color: #4caf50;"></div>
+                        <p class="about-card-content">
+                            感谢剑桥大学PilotX项目组在技术指导、资源支持与项目推进方面提供的专业帮助与支持。
+                        </p>
+                    </div>
+                    
+                    <div class="about-card">
+                        <div class="about-card-icon" style="background-color: #f3e5f5; color: #9c27b0;">
+                            👥
+                        </div>
+                        <h3 class="about-card-title">项目成员</h3>
+                        <div class="about-card-divider" style="background-color: #9c27b0;"></div>
+                        <p class="about-card-content">
+                            感谢所有参与本项目设计、开发、测试与优化的团队成员，你们的努力让本项目得以顺利完成。
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="special-thanks">
+                    <div class="special-thanks-icon">
+                        <div class="heart-icon">❤️</div>
+                    </div>
+                    <div class="special-thanks-content">
+                        <h3 class="special-thanks-title">特别感谢</h3>
+                        <p class="special-thanks-text">
+                            感谢所有使用本平台的老师们提供的宝贵反馈和建议，正是你们的支持与信任，让我们不断改进与成长，致力于为历史教育带来更智能、更高效的教学体验。
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="open-source">
+                    <div class="open-source-content">
+                        <h3 class="open-source-title">
+                            <span>💡</span>
+                            开源与合作
+                        </h3>
+                        <p class="open-source-text">
+                            本项目致力于推动教育与AI技术的深度融合，欢迎更多教育工作者、研究者与开发者加入我们，共同探索智能教育的无限可能。
+                        </p>
+                        <button class="contact-button">
+                            <span>📧</span>
+                            联系我们
+                        </button>
+                    </div>
+                    <div class="open-source-illustration">
+                        <div class="handshake-icon">🤝</div>
+                        <div class="code-icon">
+                            <span>&lt;/&gt;</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+            </div>
+            
+            <div class="about-footer">
+                <p>© 2024 AI备课助手 版权所有</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 生成活动页面 -->
+    <div class="generate-page" id="generate-page" style="display: none;">
+        <div class="generate-container">
+            <style>
+                :root{
+                  --bg:#f5f8fc;
+                  --card:#ffffff;
+                  --line:#e6edf7;
+                  --text:#1f2a44;
+                  --sub:#7c8aa5;
+                  --blue:#2f6df6;
+                  --blue-soft:#eef4ff;
+                  --green:#24b26b;
+                  --green-soft:#ecfbf2;
+                  --orange:#f5a338;
+                  --orange-soft:#fff5e8;
+                  --purple:#a15cff;
+                  --purple-soft:#f6eeff;
+                  --mint:#eaf8ef;
+                  --shadow:0 12px 32px rgba(31,42,68,.06);
+                  --radius:20px;
+                }
+                *{box-sizing:border-box}
+                body{
+                  margin:0;
+                  font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+                  background:var(--bg);
+                  color:var(--text);
+                }
+                .page{
+                  max-width:1480px;
+                  margin:0 auto;
+                  padding:20px 28px 36px;
+                }
+                .topbar{
+                  display:flex;
+                  justify-content:space-between;
+                  align-items:center;
+                  margin-bottom:10px;
+                }
+                .ghost-btn{
+                  border:1px solid var(--line);
+                  background:rgba(255,255,255,.92);
+                  color:var(--text);
+                  height:48px;
+                  padding:0 18px;
+                  border-radius:14px;
+                  font-size:16px;
+                  font-weight:700;
+                  cursor:pointer;
+                }
+                .hero{
+                  text-align:center;
+                  padding:8px 0 18px;
+                }
+                .hero h1{
+                  margin:0;
+                  font-size:72px;
+                  line-height:1.08;
+                  font-weight:900;
+                  letter-spacing:-1px;
+                }
+                .hero .hl{color:var(--blue)}
+                .hero p{
+                  margin:14px auto 0;
+                  max-width:980px;
+                  font-size:18px;
+                  color:var(--sub);
+                  line-height:1.8;
+                }
+                .steps{
+                  display:grid;
+                  grid-template-columns:repeat(5,1fr);
+                  background:var(--card);
+                  border:1px solid var(--line);
+                  border-radius:18px;
+                  overflow:hidden;
+                  box-shadow:var(--shadow);
+                  margin-bottom:18px;
+                }
+                .step{
+                  padding:18px 20px 16px;
+                  border-right:1px solid var(--line);
+                  background:#fff;
+                }
+                .step:last-child{border-right:none}
+                .step.active{
+                  background:#f9fbff;
+                  box-shadow:inset 0 0 0 2px #dbe7ff;
+                }
+                .n{
+                  width:30px;height:30px;border-radius:999px;
+                  display:inline-flex;align-items:center;justify-content:center;
+                  background:#edf3ff;color:var(--blue);font-weight:800;margin-bottom:10px;
+                }
+                .step.active .n{background:var(--blue);color:#fff}
+                .step h4{margin:0;font-size:18px}
+                .step p{margin:6px 0 0;color:var(--sub);font-size:14px}
+
+                .grid-top{
+                  display:grid;
+                  grid-template-columns:1fr 1fr 1.08fr;
+                  gap:18px;
+                  margin-bottom:18px;
+                }
+                .card{
+                  background:var(--card);
+                  border:1px solid var(--line);
+                  border-radius:var(--radius);
+                  box-shadow:var(--shadow);
+                  padding:18px;
+                }
+                .card-title{
+                  display:flex;
+                  align-items:center;
+                  justify-content:space-between;
+                  gap:12px;
+                  margin-bottom:14px;
+                }
+                .card-title .left{
+                  display:flex;
+                  align-items:center;
+                  gap:10px;
+                  font-size:18px;
+                  font-weight:900;
+                }
+                .title-icon{
+                  width:28px;height:28px;border-radius:10px;
+                  display:inline-flex;align-items:center;justify-content:center;
+                  font-size:15px;
+                }
+                .title-icon.blue{background:var(--blue-soft);color:var(--blue)}
+                .title-icon.green{background:var(--green-soft);color:var(--green)}
+                .title-icon.orange{background:var(--orange-soft);color:var(--orange)}
+                .muted{color:var(--sub);font-size:14px}
+                .small-tag{
+                  display:inline-flex;align-items:center;gap:6px;
+                  padding:8px 12px;border-radius:999px;
+                  font-size:13px;font-weight:800;
+                  background:var(--green-soft);color:var(--green);
+                }
+                .tiny-btn{
+                  height:40px;padding:0 16px;border-radius:12px;border:1px solid var(--line);
+                  background:#fff;color:#5b6982;font-size:15px;font-weight:700;cursor:pointer;
+                }
+                .file-box{
+                  border:1px solid #dbe4f4;
+                  border-radius:16px;
+                  background:#fbfdff;
+                  padding:14px;
+                  display:flex;
+                  justify-content:space-between;
+                  align-items:center;
+                  margin-bottom:14px;
+                }
+                .file-main{display:flex;align-items:center;gap:12px}
+                .file-icon{
+                  width:52px;height:52px;border-radius:16px;background:#ecf1ff;color:var(--blue);
+                  display:inline-flex;align-items:center;justify-content:center;font-size:24px;
+                }
+                .excerpt{
+                  border:1px solid var(--line);
+                  border-radius:16px;
+                  background:#fcfdff;
+                  padding:16px;
+                  min-height:170px;
+                  line-height:1.9;
+                  color:#3f4e69;
+                  font-size:15px;
+                }
+                .outline-center{
+                  margin-top:12px;
+                  border:1.5px solid #97b4ff;
+                  color:var(--blue);
+                  background:#fff;
+                  border-radius:14px;
+                  height:48px;
+                  min-width:130px;
+                  font-size:16px;
+                  font-weight:800;
+                  cursor:pointer;
+                }
+                .kv{
+                  display:grid;
+                  grid-template-columns:110px 1fr;
+                  border:1px solid #dff0e6;
+                  border-radius:14px;
+                  overflow:hidden;
+                  margin-bottom:10px;
+                  background:#f8fffb;
+                }
+                .kv .k{
+                  background:#ecfbf4;
+                  color:#169860;
+                  padding:14px;
+                  font-weight:800;
+                }
+                .kv .v{
+                  padding:14px;
+                  color:#31425d;
+                  line-height:1.7;
+                }
+                .chip-row{display:flex;gap:8px;flex-wrap:wrap}
+                .chip{
+                  display:inline-flex;
+                  padding:7px 10px;
+                  border-radius:999px;
+                  background:#edf5ef;
+                  color:#4f5f74;
+                  font-size:13px;
+                  font-weight:700;
+                }
+                .form-grid{display:grid;gap:12px}
+                input,textarea,select{
+                  width:100%;
+                  border:1px solid #dce6f5;
+                  border-radius:14px;
+                  background:#fff;
+                  padding:14px 16px;
+                  font:inherit;
+                  color:#2f405c;
+                }
+                textarea{resize:none;min-height:90px}
+                .note-row{
+                  margin-top:12px;
+                  color:var(--orange);
+                  font-size:14px;
+                  font-weight:700;
+                }
+                .compare-card{padding:18px}
+                .section-head{
+                  display:flex;align-items:center;gap:10px;
+                  font-size:18px;font-weight:900;margin-bottom:14px;
+                }
+                .compare-grid{
+                  display:grid;
+                  grid-template-columns:1fr 1fr 1fr 1fr;
+                  gap:16px;
+                }
+                .soft-box{
+                  border:1px solid var(--line);
+                  border-radius:18px;
+                  min-height:188px;
+                  padding:16px;
+                  background:#fff;
+                }
+                .soft-box.blue{background:#f7faff;border-color:#d9e6ff}
+                .soft-box.orange{background:#fff9f1;border-color:#fde5c4}
+                .soft-box.purple{background:#fbf7ff;border-color:#eadbff}
+                .soft-box.green{background:#f4fbf6;border-color:#d9f0df}
+                .soft-box h4{margin:0 0 8px;font-size:17px}
+                .soft-box .sub{color:var(--sub);font-size:14px;margin-bottom:12px;line-height:1.6}
+                .soft-placeholder{
+                  border:1px solid #dfe7f4;
+                  background:#fff;
+                  border-radius:14px;
+                  min-height:104px;
+                  padding:14px;
+                  color:#9aa7bf;
+                  line-height:1.8;
+                  font-size:14px;
+                }
+                .report-btn{
+                  display:block;
+                  margin:16px auto 0;
+                  border:none;
+                  background:linear-gradient(135deg,var(--blue),#1a58e9);
+                  color:#fff;
+                  border-radius:16px;
+                  height:56px;
+                  min-width:230px;
+                  padding:0 28px;
+                  font-size:22px;
+                  font-weight:800;
+                  cursor:pointer;
+                  box-shadow:0 14px 26px rgba(47,109,246,.2);
+                }
+                .tips{
+                  display:flex;align-items:center;gap:8px;
+                  color:var(--sub);font-size:15px;margin-top:14px;
+                }
+                .fab{
+                  position:fixed;
+                  right:28px;bottom:26px;
+                  border:none;
+                  border-radius:18px;
+                  padding:16px 20px;
+                  background:linear-gradient(135deg,var(--blue),#1858ea);
+                  color:#fff;
+                  font-size:18px;
+                  font-weight:800;
+                  cursor:pointer;
+                  box-shadow:0 18px 32px rgba(47,109,246,.28);
+                }
+                @media (max-width:1280px){
+                  .grid-top,.compare-grid,.steps{grid-template-columns:1fr}
+                  .hero h1{font-size:44px}
+                }
+            </style>
+            <div class="page">
+                <div class="topbar">
+                    <button class="ghost-btn">← 返回首页</button>
+                    <button class="ghost-btn">❔ 使用指南</button>
+                </div>
+
+                <section class="hero">
+                    <h1>AI<span class="hl">史料速读</span>与对比分析</h1>
+                    <p>上传史料 → AI分析 → 自主总结 → 对比与判断 → 提升信息筛选与证据意识</p>
+                </section>
+
+                <section class="steps">
+                    <div class="step active">
+                        <div class="n">1</div>
+                        <h4>上传史料</h4>
+                        <p>导入原始文献材料</p>
+                    </div>
+                    <div class="step">
+                        <div class="n">2</div>
+                        <h4>AI速读分析</h4>
+                        <p>提取关键信息</p>
+                    </div>
+                    <div class="step">
+                        <div class="n">3</div>
+                        <h4>自主总结</h4>
+                        <p>学生独立提炼</p>
+                    </div>
+                    <div class="step">
+                        <div class="n">4</div>
+                        <h4>对比与判断</h4>
+                        <p>AI与个人总结对比</p>
+                    </div>
+                    <div class="step">
+                        <div class="n">5</div>
+                        <h4>形成结论</h4>
+                        <p>输出证据意识</p>
+                    </div>
+                </section>
+
+                <section class="grid-top">
+                    <div class="card">
+                        <div class="card-title">
+                            <div class="left"><span class="title-icon blue">📄</span><span>原始史料</span></div>
+                            <div class="muted">支持 TXT / PDF / 图片格式</div>
+                        </div>
+                        <div class="file-box">
+                            <div class="file-main">
+                                <div class="file-icon">📘</div>
+                                <div>
+                                    <div style="font-weight:800">1884年《中法会议简明条款》节选.txt</div>
+                                    <div class="muted">TXT · 2.3 KB</div>
+                                </div>
+                            </div>
+                            <div style="color:var(--blue);font-size:22px">◉</div>
+                        </div>
+                        <div class="excerpt">
+                            一、清国国家应允将下开地方之关税自主权：广东、福建、浙江、江苏……<br><br>
+                            二、清国应允法国在下开各口地方设立领事馆：北京、上海、天津、汉口……<br><br>
+                            三、清国应允将下开各府地方，准法国人居住及贸易：苏州、杭州、沙市……<br><br>
+                            ……
+                        </div>
+                        <div style="text-align:center"><button class="outline-center">重新上传</button></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">
+                            <div class="left"><span class="title-icon green">✅</span><span>AI分析结果</span></div>
+                            <div class="small-tag">✓ AI已完成分析</div>
+                        </div>
+                        <div class="kv"><div class="k">时间</div><div class="v">1884年</div></div>
+                        <div class="kv"><div class="k">人物/国家</div><div class="v">清政府、法国</div></div>
+                        <div class="kv"><div class="k">核心主张</div><div class="v">法国要求获得关税自主权，并在多个通商口岸设立领事馆，扩大在华居住与贸易权限。</div></div>
+                        <div class="kv"><div class="k">背景信息</div><div class="v">中法战争后，清政府被迫追签一系列不平等条约，法国借此扩大在华权益。</div></div>
+                        <div class="kv"><div class="k">关键词</div><div class="v"><div class="chip-row"><span class="chip">关税自主权</span><span class="chip">领事馆设立</span><span class="chip">通商口岸</span><span class="chip">不平等条约</span></div></div></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">
+                            <div class="left"><span class="title-icon orange">📝</span><span>我的分析</span><span style="color:var(--orange);font-size:16px">（学生填写）</span></div>
+                            <button class="tiny-btn">清空</button>
+                        </div>
+                        <div class="form-grid">
+                            <input placeholder="如：19世纪末" value="19世纪末" />
+                            <input placeholder="如：清政府、法国" value="清政府、法国" />
+                            <textarea placeholder="请用自己的话概括史料的主要内容…"></textarea>
+                            <textarea placeholder="从史料中找出支持你观点的句子或关键词…"></textarea>
+                        </div>
+                        <div class="note-row">💡 请完成填写后进行对比分析</div>
+                    </div>
+                </section>
+
+                <section class="card compare-card">
+                    <div class="section-head">⚖ AI分析与我的分析对比</div>
+                    <div class="compare-grid">
+                        <div class="soft-box blue">
+                            <h4 style="color:var(--blue)">AI多了什么？</h4>
+                            <div class="sub">AI提取到但我未想到的关键信息</div>
+                            <div class="soft-placeholder">系统将自动生成对比结果…</div>
+                        </div>
+                        <div class="soft-box orange">
+                            <h4 style="color:var(--orange)">AI漏了什么？</h4>
+                            <div class="sub">我提到但AI未提取的关键信息</div>
+                            <div class="soft-placeholder">系统将自动生成对比结果…</div>
+                        </div>
+                        <div class="soft-box purple">
+                            <h4 style="color:var(--purple)">哪个更准确？为什么？</h4>
+                            <div class="sub">判断AI或我的分析更准确，并说明理由</div>
+                            <div class="soft-placeholder">请填写你的判断和理由…</div>
+                        </div>
+                        <div class="soft-box green">
+                            <h4 style="color:#169860">我的结论</h4>
+                            <div class="sub">基于对比，我对AI分析的评价是…</div>
+                            <select>
+                                <option>请选择评价</option>
+                                <option>可作为速读参考，但需修正</option>
+                                <option>基本准确，可辅助理解</option>
+                                <option>存在明显偏差，不能直接采用</option>
+                            </select>
+                            <div style="height:10px"></div>
+                            <textarea placeholder="请说明你的理由…" style="min-height:84px"></textarea>
+                        </div>
+                    </div>
+                    <button class="report-btn">📄 生成对比报告</button>
+                </section>
+
+                <div class="tips">💡 小贴士：对比的过程比答案更重要，学会质疑、验证和判断，才是历史学习的核心能力。</div>
+            </div>
+
+
+        </div>
+    </div>
+    
+    <!-- 折叠式聊天框 -->
+    <div class="chat-container">
+        <div class="chat-header" id="chat-header">
+            <span>AI助手</span>
+            <button id="chat-toggle">▶</button>
+        </div>
+        <div class="chat-body chat-body-hidden" id="chat-body">
+            <div class="chat-messages" id="chat-messages">
+                <div class="bot-message">
+                    <p>你好！我是史料分析助手，有什么可以帮助你的吗？</p>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <div class="uploaded-files" id="uploaded-files">
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="user-input" placeholder="请输入你的问题...">
+                    <button id="send-button">发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 聊天框折叠/展开功能
+        const chatHeader = document.getElementById('chat-header');
+        const chatBody = document.getElementById('chat-body');
+        const chatToggle = document.getElementById('chat-toggle');
+        
+        chatHeader.addEventListener('click', () => {
+            chatBody.classList.toggle('chat-body-hidden');
+            chatToggle.textContent = chatBody.classList.contains('chat-body-hidden') ? '▶' : '▼';
+        });
+        
+        // 发送消息功能
+        const sendButton = document.getElementById('send-button');
+        const userInput = document.getElementById('user-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const uploadedFilesContainer = document.getElementById('uploaded-files');
+        
+        function sendMessage() {
+            const message = userInput.value.trim();
+            
+            // 如果没有消息，不执行
+            if (!message) {
+                return;
+            }
+            
+            // 添加用户消息到聊天界面
+            chatMessages.innerHTML += `
+                <div class="user-message">
+                    <p>${message}</p>
+                </div>
+            `;
+            
+            // 清空输入框
+            userInput.value = '';
+            
+            // 滚动到底部
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // 添加加载消息
+            const loadingId = 'loading-' + Date.now();
+            chatMessages.innerHTML += `
+                <div class="bot-message loading" id="${loadingId}">
+                    <div class="loading-content">
+                        <span class="hourglass"></span>
+                        <span>正在分析史料...</span>
+                    </div>
+                </div>
+            `;
+            
+            // 滚动到底部
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // 使用普通聊天
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 移除加载消息
+                document.getElementById(loadingId).remove();
+                
+                // 添加机器人回复到聊天界面
+                chatMessages.innerHTML += `
+                    <div class="bot-message">
+                        <p>${data.response}</p>
+                    </div>
+                `;
+                // 滚动到底部
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            })
+            .catch(error => {
+                // 移除加载消息
+                document.getElementById(loadingId).remove();
+                
+                console.error('Error:', error);
+                chatMessages.innerHTML += `
+                    <div class="bot-message">
+                        <p>抱歉，我暂时无法回答你的问题，请稍后再试。</p>
+                    </div>
+                `;
+                // 滚动到底部
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        }
+        
+        // 点击发送按钮
+        sendButton.addEventListener('click', sendMessage);
+        
+        // 按回车键发送
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // 标签页功能
+        const generateTab = document.getElementById('generate-tab');
+        const aboutTab = document.getElementById('about-tab');
+        const mainContainer = document.querySelector('.main-container');
+        const generatePage = document.getElementById('generate-page');
+        const aboutPage = document.getElementById('about-page');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        generateTab.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // 显示生成活动页面，隐藏其他内容
+            mainContainer.style.display = 'none';
+            aboutPage.style.display = 'none';
+            generatePage.style.display = 'block';
+            
+            // 更新导航链接的活动状态
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+            generateTab.classList.add('active');
+        });
+        
+        aboutTab.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // 显示关于我们页面，隐藏其他内容
+            mainContainer.style.display = 'none';
+            generatePage.style.display = 'none';
+            aboutPage.style.display = 'block';
+            
+            // 更新导航链接的活动状态
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+            aboutTab.classList.add('active');
+        });
+        
+        // 其他导航链接点击时显示主容器
+        navLinks.forEach(link => {
+            if (link.id !== 'about-tab' && link.id !== 'generate-tab') {
+                link.addEventListener('click', (e) => {
+                    // 只有当点击的是素材库链接时才阻止默认行为
+                    if (link.textContent.trim() === '素材库') {
+                        e.preventDefault();
+                        mainContainer.style.display = 'flex';
+                        aboutPage.style.display = 'none';
+                        generatePage.style.display = 'none';
+                        
+                        // 更新导航链接的活动状态
+                        navLinks.forEach(l => {
+                            l.classList.remove('active');
+                        });
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+    </script>
+    
+    <style>
+        /* 聊天框样式 */
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            background-color: #2196f3;
+            color: white;
+            padding: 15px;
+            border-radius: 15px 15px 0 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-header span {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .chat-header button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .chat-body {
+            background-color: white;
+            border-radius: 0 0 15px 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-body-hidden {
+            display: none;
+        }
+        
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        .user-message {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+        
+        .user-message p {
+            display: inline-block;
+            background-color: #e3f2fd;
+            padding: 12px 16px;
+            border-radius: 18px 18px 0 18px;
+            max-width: 80%;
+            font-size: 14px;
+        }
+        
+        .bot-message {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+        
+        .bot-message p {
+            display: inline-block;
+            background-color: #f8f9fa;
+            padding: 12px 16px;
+            border-radius: 18px 18px 18px 0;
+            max-width: 80%;
+            font-size: 14px;
+        }
+        
+        .analysis-result {
+            background-color: #f8f9fa;
+            border-left: 3px solid #2196f3;
+            margin: 10px 0;
+        }
+        
+        .analysis-result p {
+            background-color: transparent;
+            padding: 5px 0;
+        }
+        
+        .analysis-content {
+            background-color: #fff;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-top: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+        
+        .chat-input-area {
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .uploaded-files {
+            padding: 8px 10px;
+            max-height: 80px;
+            overflow-y: auto;
+            background-color: #fafafa;
+        }
+        
+        .uploaded-file-item {
+            display: inline-flex;
+            align-items: center;
+            background-color: #e3f2fd;
+            padding: 5px 12px;
+            border-radius: 15px;
+            margin-right: 8px;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #1976d2;
+        }
+        
+        .uploaded-file-item .remove-file {
+            margin-left: 8px;
+            cursor: pointer;
+            color: #666;
+            font-weight: bold;
+        }
+        
+        .uploaded-file-item .remove-file:hover {
+            color: #f44336;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #f0f0f0;
+            align-items: center;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        
+        #upload-button {
+            background-color: #f8f9fa;
+            color: #666;
+            border: 1px solid #e0e0e0;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-right: 5px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        #upload-button:hover {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+        }
+        
+        #send-button {
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        
+        #send-button:hover {
+            background-color: #1976d2;
+        }
+        
+        /* 加载动画样式 */
+        .loading-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .hourglass {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #2196f3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI出题与质检 · 题目质量分析</title>
+  <style>
+    :root {
+      --bg: #f5f8fc;
+      --card: #ffffff;
+      --line: #e7edf6;
+      --text: #1f2a44;
+      --sub: #7c8aa5;
+      --blue: #2f6df6;
+      --blue-soft: #eef4ff;
+      --green: #28b36b;
+      --green-soft: #ebfbf2;
+      --orange: #f6a43a;
+      --orange-soft: #fff5e8;
+      --red: #ff6b6b;
+      --shadow: 0 12px 32px rgba(31, 42, 68, 0.06);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 20px 28px 36px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .ghost-btn {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.88);
+      color: var(--text);
+      border-radius: 14px;
+      height: 48px;
+      padding: 0 18px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 8px 0 20px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 72px;
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .hero h1 .hl { color: var(--blue); }
+
+    .hero p {
+      margin: 14px auto 0;
+      max-width: 980px;
+      color: var(--sub);
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .step {
+      position: relative;
+      padding: 18px 20px 16px;
+      border-right: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .step:last-child { border-right: none; }
+
+    .step.active {
+      background: #f9fbff;
+      box-shadow: inset 0 0 0 2px #dbe7ff;
+    }
+
+    .step .n {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #edf3ff;
+      color: var(--blue);
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .step.active .n {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .step h4 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .step p {
+      margin: 6px 0 0;
+      color: var(--sub);
+      font-size: 14px;
+    }
+
+    .grid-top,
+    .grid-bottom {
+      display: grid;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .grid-top { grid-template-columns: 380px 1fr 430px; }
+    .grid-bottom { grid-template-columns: 420px 420px 1fr; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .card-title .left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .title-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--blue);
+      background: var(--blue-soft);
+      font-size: 15px;
+    }
+
+    .muted { color: var(--sub); font-size: 14px; }
+
+    .small-btn {
+      height: 42px;
+      padding: 0 16px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      color: #4b5870;
+      cursor: pointer;
+    }
+
+    .btn-row { display: flex; gap: 10px; margin-bottom: 14px; }
+
+    .file-box {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fbfdff;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .file-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .file-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      background: #eaf0ff;
+      color: var(--blue);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .excerpt {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fcfdff;
+      padding: 16px;
+      min-height: 240px;
+      color: #3d4c68;
+      line-height: 1.9;
+      font-size: 15px;
+    }
+
+    .word-count {
+      margin-top: 12px;
+      color: var(--sub);
+      font-size: 14px;
+    }
+
+    .tab-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 8px 14px;
+      border-radius: 12px;
+      background: #f3f6fb;
+      color: #596882;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .tab.active {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .question-item {
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fbfdff;
+      padding: 12px 14px;
+    }
+
+    .q-no {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: #eff4ff;
+      color: var(--blue);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .pill.green { background: var(--green-soft); color: var(--green); }
+    .pill.orange { background: var(--orange-soft); color: #df8b20; }
+
+    .radar-box {
+      height: 260px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .radar-svg {
+      width: 100%;
+      max-width: 280px;
+      height: 220px;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      color: var(--sub);
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .legend .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    .summary-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-weight: 800;
+    }
+
+    .summary-bar .bad { color: var(--red); }
+    .summary-bar .good { color: var(--blue); }
+
+    .qa-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .question-stem {
+      border: 1px solid var(--line);
+      border-radius: 16px 16px 0 0;
+      padding: 16px 18px;
+      background: #fbfdff;
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .option {
+      border: 1px solid var(--line);
+      border-top: none;
+      padding: 16px 18px;
+      background: #fff;
+      font-size: 16px;
+      color: #485770;
+      position: relative;
+    }
+
+    .option:last-child { border-radius: 0 0 16px 16px; }
+
+    .option.active {
+      background: #f5f8ff;
+      border-color: #9cb8ff;
+      color: var(--blue);
+      font-weight: 800;
+      box-shadow: inset 0 0 0 1px #9cb8ff;
+    }
+
+    .option.active::after {
+      content: "✓";
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: var(--blue);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .issue-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px dashed #e8eef8;
+    }
+
+    .issue-row:last-child { border-bottom: none; }
+
+    .issue-row h4 {
+      margin: 0 0 4px;
+      font-size: 17px;
+    }
+
+    .issue-row p {
+      margin: 0;
+      color: var(--sub);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .check {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 1.5px solid #cad7eb;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: transparent;
+      font-weight: 900;
+      margin-top: 4px;
+    }
+
+    .check.active {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .level-list {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .level-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-weight: 700;
+      color: #4c5a72;
+    }
+
+    .level-item.active {
+      background: #fff8ef;
+      border-color: #f7cc92;
+      color: #d77b09;
+    }
+
+    .circle {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #cdd8eb;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .circle.orange {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: #fff;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      padding: 16px;
+      font: inherit;
+      resize: none;
+      color: #33415d;
+      background: #fff;
+    }
+
+    .tips-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .tips {
+      color: var(--sub);
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .outline-btn,
+    .primary-btn,
+    .fab {
+      border-radius: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      font-size: 17px;
+    }
+
+    .outline-btn {
+      height: 56px;
+      padding: 0 26px;
+      border: 1.5px solid #9cb8ff;
+      color: var(--blue);
+      background: #fff;
+    }
+
+    .primary-btn {
+      height: 56px;
+      padding: 0 30px;
+      border: none;
+      color: #fff;
+      background: linear-gradient(135deg, var(--blue), #1858ea);
+      box-shadow: 0 14px 26px rgba(47,109,246,0.2);
+    }
+
+    .fab {
+      position: fixed;
+      right: 28px;
+      bottom: 26px;
+      border: none;
+      color: #fff;
+      background: linear-gradient(135deg, var(--blue), #1858ea);
+      box-shadow: 0 18px 32px rgba(47,109,246,0.28);
+      padding: 16px 20px;
+    }
+
+    @media (max-width: 1280px) {
+      .grid-top, .grid-bottom { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 44px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <button class="ghost-btn">← 返回首页</button>
+      <button class="ghost-btn">❔ 使用指南</button>
+    </div>
+
+    <section class="hero">
+      <h1>AI出题与质检 · <span class="hl">题目质量分析</span></h1>
+      <p>基于史料生成结构化题组，并对题目质量进行分析与判断，培养学生批判性思维与信息验证能力</p>
+    </section>
+
+    <section class="steps">
+      <div class="step active">
+        <div class="n">1</div>
+        <h4>上传史料</h4>
+        <p>输入或上传参考材料</p>
+      </div>
+      <div class="step">
+        <div class="n">2</div>
+        <h4>AI生成题组</h4>
+        <p>结构化生成历史题目</p>
+      </div>
+      <div class="step">
+        <div class="n">3</div>
+        <h4>学生作答</h4>
+        <p>完成题目练习</p>
+      </div>
+      <div class="step">
+        <div class="n">4</div>
+        <h4>题目质检</h4>
+        <p>分析题目质量与问题</p>
+      </div>
+      <div class="step">
+        <div class="n">5</div>
+        <h4>总结反思</h4>
+        <p>形成判断与改进建议</p>
+      </div>
+    </section>
+
+    <section class="grid-top">
+      <div class="card">
+        <div class="card-title">
+          <div class="left"><span class="title-icon">📄</span><span>参考史料</span></div>
+        </div>
+        <div class="btn-row">
+          <button class="small-btn">⤴ 上传文件</button>
+          <button class="small-btn">📋 粘贴文本</button>
+        </div>
+        <div class="file-box">
+          <div class="file-main">
+            <div class="file-icon">📘</div>
+            <div>
+              <div style="font-weight:800">清末新政部分文献材料.txt</div>
+              <div class="muted">TXT · 12.6 KB</div>
+            </div>
+          </div>
+          <div class="muted">👁</div>
+        </div>
+        <div class="excerpt">
+          材料摘录：<br>
+          光绪二十四年，清政府发布《明定国是诏》，宣布变法图强，
+          以“自强、求富”为纲领，整顿吏治、裁撤冗员、开设学堂、
+          训练新军、鼓励商业……
+        </div>
+        <div class="word-count">共 1,265 字</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="left"><span class="title-icon">🧩</span><span>AI生成题组</span><span class="muted">（基于上述史料）</span></div>
+          <div class="pill green">共 5 题</div>
+        </div>
+        <div class="tab-row">
+          <div class="tab active">全部</div>
+          <div class="tab">单选题</div>
+          <div class="tab">多选题</div>
+          <div class="tab">材料解析题</div>
+          <div class="tab">简答题</div>
+        </div>
+        <div class="question-list">
+          <div class="question-item">
+            <div class="q-no">1</div>
+            <div>清政府发布《明定国是诏》的主要目的是？</div>
+            <div class="pill green">单选题</div>
+          </div>
+          <div class="question-item">
+            <div class="q-no">2</div>
+            <div>根据材料，清末新政中“自强”主要体现在哪？</div>
+            <div class="pill green">多选题</div>
+          </div>
+          <div class="question-item">
+            <div class="q-no">3</div>
+            <div>清末新政在教育方面采取了哪些措施？（材料解析题）</div>
+            <div class="pill green">材料解析题</div>
+          </div>
+          <div class="question-item">
+            <div class="q-no">4</div>
+            <div>清末新政对中国社会产生了怎样的影响？</div>
+            <div class="pill green">简答题</div>
+          </div>
+          <div class="question-item">
+            <div class="q-no">5</div>
+            <div>清末新政失败的根本原因是什么？结合材料说明。</div>
+            <div class="pill green">简答题</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="left"><span class="title-icon">📊</span><span>题目质检分析</span><span class="muted">（AI质检 + 学生判断）</span></div>
+          <button class="small-btn">质检标准</button>
+        </div>
+        <div class="radar-box">
+          <svg class="radar-svg" viewBox="0 0 300 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g stroke="#dfe6f2" stroke-width="1.2">
+              <polygon points="150,20 235,80 205,175 95,175 65,80"/>
+              <polygon points="150,48 210,92 188,160 112,160 90,92"/>
+              <polygon points="150,76 186,104 171,145 129,145 114,104"/>
+              <line x1="150" y1="20" x2="150" y2="175"/>
+              <line x1="235" y1="80" x2="95" y2="175"/>
+              <line x1="65" y1="80" x2="205" y2="175"/>
+            </g>
+            <text x="150" y="12" text-anchor="middle" fill="#7d8aa6" font-size="13">材料相关性</text>
+            <text x="258" y="82" fill="#7d8aa6" font-size="13">史实准确性</text>
+            <text x="212" y="192" fill="#7d8aa6" font-size="13">逻辑合理性</text>
+            <text x="38" y="192" fill="#7d8aa6" font-size="13">设问恰当性</text>
+            <text x="10" y="82" fill="#7d8aa6" font-size="13">难度适中性</text>
+            <polygon points="150,60 196,96 173,143 109,150 88,98" fill="rgba(47,109,246,.15)" stroke="#2f6df6" stroke-width="2.2"/>
+            <polygon points="150,78 182,88 186,126 126,137 112,108" fill="rgba(40,179,107,.16)" stroke="#28b36b" stroke-width="2.2"/>
+          </svg>
+        </div>
+        <div class="legend">
+          <span><i class="dot" style="background:#2f6df6"></i>AI评分</span>
+          <span><i class="dot" style="background:#28b36b"></i>学生评分</span>
+        </div>
+        <div class="summary-bar">
+          <span>整体质量：<span class="good">中等偏上</span></span>
+          <span class="bad">⚠ 存在问题：2 处</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid-bottom">
+      <div class="card">
+        <div class="qa-title">
+          <div class="card-title" style="margin:0">
+            <div class="left"><span class="title-icon">🧑‍🎓</span><span>学生作答区</span></div>
+          </div>
+          <div class="muted">完成练习后可进入质检环节</div>
+        </div>
+        <div class="question-stem">1　清政府发布《明定国是诏》的主要目的是？</div>
+        <div class="option">A. 废除科举制度</div>
+        <div class="option active">B. 学习西方制度，挽救统治危机</div>
+        <div class="option">C. 发展商业，增加财政收入</div>
+        <div class="option">D. 加强军备，抵御外国入侵</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="left"><span class="title-icon">🔎</span><span>题目问题识别</span><span class="muted">（学生标注）</span></div>
+        </div>
+        <div class="muted" style="margin-bottom: 10px;">提示：从材料出发，找出题目存在的问题</div>
+
+        <div class="issue-row">
+          <div>
+            <h4>是否偏离材料内容</h4>
+            <p>题目考察的内容在材料中无依据或超出范围</p>
+          </div>
+          <span class="check active">✓</span>
+        </div>
+
+        <div class="issue-row">
+          <div>
+            <h4>是否存在理解偏差</h4>
+            <p>题目对材料的核心意思理解有误或过度推断</p>
+          </div>
+          <span class="check active">✓</span>
+        </div>
+
+        <div class="issue-row">
+          <div>
+            <h4>是否过度概括</h4>
+            <p>题目表述过于笼统，忽略重要限定条件</p>
+          </div>
+          <span class="check"></span>
+        </div>
+
+        <div class="issue-row">
+          <div>
+            <h4>是否设问不清</h4>
+            <p>题干模糊，缺少关键信息或存在歧义</p>
+          </div>
+          <span class="check"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="left"><span class="title-icon">🗣</span><span>学生质检结论与建议</span></div>
+        </div>
+        <div class="muted" style="margin-bottom: 12px;">请选择该题的质量等级</div>
+        <div class="level-list">
+          <div class="level-item"><span class="circle">✓</span><span>优秀</span><span class="muted">题目科学，紧扣材料，设问合理</span></div>
+          <div class="level-item"><span class="circle">○</span><span>良好</span><span class="muted">整体合理，存在轻微问题</span></div>
+          <div class="level-item active"><span class="circle orange">!</span><span>一般</span><span class="muted">存在明显问题，需修改</span></div>
+          <div class="level-item"><span class="circle">○</span><span>较差</span><span class="muted">偏离材料，设问不当</span></div>
+        </div>
+        <div class="muted" style="margin-bottom: 10px;">修改建议（可选）</div>
+        <textarea>题目过于笼统，未限定“目的”的具体层面，建议结合材料中的具体措施进行设问，避免学生只凭常识作答。</textarea>
+        <div class="muted" style="text-align:right; margin-top:8px;">0 / 200</div>
+      </div>
+    </section>
+
+    <div class="tips-row">
+      <div class="tips">💡 小贴士：AI生成的题目并非完全可靠，学会判断与验证，才能更好地使用AI。</div>
+      <div class="action-row">
+        <button class="outline-btn">↻ 重新生成题组</button>
+        <button class="primary-btn">📄 生成质检报告</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="fab">🤖 问AI助手</button>
+</body>
+</html>

@@ -1,0 +1,6 @@
+flask
+python-dotenv
+asyncio
+volcengine-python-sdk[ark]
+volcengine
+openai

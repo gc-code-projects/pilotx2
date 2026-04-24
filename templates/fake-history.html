@@ -1,0 +1,2336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI伪史之火眼金睛 - AI备课助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* 顶部导航栏 */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 0 20px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2196f3;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #2196f3;
+        }
+        
+        .nav-link.active {
+            color: #2196f3;
+            font-weight: 600;
+            border-bottom: 2px solid #2196f3;
+        }
+        
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .help-link, .user-profile {
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* 主容器 */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+        
+        /* 左侧边栏 */
+        .sidebar {
+            width: 200px;
+            background-color: white;
+            box-shadow: 2px 0 4px rgba(0,0,0,0.05);
+            padding: 20px 0;
+            min-height: 800px;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+        
+        .sidebar-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #999;
+            padding: 0 20px 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .sidebar-links {
+            list-style: none;
+        }
+        
+        .sidebar-link {
+            padding: 10px 20px;
+            color: #666;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-link:hover {
+            background-color: #f5f7fa;
+            color: #2196f3;
+        }
+        
+        .sidebar-link.active {
+            background-color: #e3f2fd;
+            color: #2196f3;
+            border-left-color: #2196f3;
+            font-weight: 500;
+        }
+        
+        .upload-section {
+            padding: 20px;
+            background-color: #f8f9fa;
+            margin: 0 20px 20px;
+            border-radius: 8px;
+        }
+        
+        .upload-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .upload-description {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .upload-button {
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        
+        .upload-button:hover {
+            background-color: #1976d2;
+        }
+        
+        /* 主内容区 */
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .page-header {
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .page-description {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* 搜索和筛选 */
+        .search-filter {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+        
+        .search-input input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .search-input .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        
+        .filter-selects {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-select {
+            position: relative;
+        }
+        
+        .filter-select select {
+            padding: 10px 30px 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        .filter-button {
+            padding: 10px 15px;
+            background-color: #f5f7fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-button:hover {
+            background-color: #e0e0e0;
+        }
+        
+        /* 推荐资源 */
+        .recommended-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .recommended-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        
+        .resource-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .resource-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .resource-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .resource-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .resource-info h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+        
+        .resource-info p {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .resource-description {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .resource-actions {
+            display: flex;
+            gap: 10px;
+            font-size: 12px;
+        }
+        
+        .action-link {
+            color: #2196f3;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .action-link:hover {
+            background-color: #e3f2fd;
+        }
+        
+        /* 资源列表 */
+        .resources-section {
+            margin-bottom: 30px;
+        }
+        
+        .resources-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .tab-button {
+            padding: 8px 16px;
+            background-color: #f5f7fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            background-color: #2196f3;
+            color: white;
+            border-color: #2196f3;
+        }
+        
+        .resources-table {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            background-color: #f5f7fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+            font-weight: 600;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .table-row {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+            align-items: center;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .table-row:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        
+        .resource-name {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .resource-type {
+            color: #2196f3;
+            font-size: 12px;
+            background-color: #e3f2fd;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* 分页 */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 20px;
+        }
+        
+        .page-button {
+            padding: 6px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .page-button:hover {
+            border-color: #2196f3;
+            color: #2196f3;
+        }
+        
+        .page-button.active {
+            background-color: #2196f3;
+            color: white;
+            border-color: #2196f3;
+        }
+        
+        /* 右侧详情面板 */
+        .detail-panel {
+            width: 320px;
+            background-color: white;
+            box-shadow: -2px 0 4px rgba(0,0,0,0.05);
+            padding: 20px;
+            min-height: 800px;
+            overflow-y: auto;
+        }
+        
+        .detail-header {
+            margin-bottom: 20px;
+        }
+        
+        .detail-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .detail-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .detail-section {
+            margin-bottom: 20px;
+        }
+        
+        .detail-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .detail-content {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .detail-info {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .detail-info-item {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .detail-info-label {
+            color: #999;
+        }
+        
+        .detail-actions {
+            margin-top: 30px;
+        }
+        
+        .detail-button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+        
+        .download-button {
+            background-color: #2196f3;
+            color: white;
+        }
+        
+        .download-button:hover {
+            background-color: #1976d2;
+        }
+        
+        .analysis-button {
+            background-color: #f5f7fa;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .analysis-button:hover {
+            background-color: #e0e0e0;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .detail-panel {
+                width: 280px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 180px;
+            }
+            
+            .detail-panel {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .search-filter {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-input {
+                min-width: auto;
+            }
+            
+            .filter-selects {
+                justify-content: space-between;
+            }
+        }
+        
+        /* 关于我们页面样式 */
+        .about-page {
+            min-height: calc(100vh - 60px);
+            background-color: #f5f7fa;
+            padding: 40px 20px;
+        }
+        
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .about-header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        .about-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 200"><path d="M0,100 Q300,50 600,100 T1200,100 L1200,200 L0,200 Z" fill="%23e3f2fd" opacity="0.5"/></svg>');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+            border-radius: 20px;
+        }
+        
+        .about-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            padding-top: 40px;
+        }
+        
+        .about-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+        
+        .about-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .about-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .about-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .about-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+        
+        .about-card-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 20px;
+        }
+        
+        .about-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .about-card-divider {
+            width: 40px;
+            height: 3px;
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+        
+        .about-card-content {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .about-card-footer {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .special-thanks {
+            background-color: #fff3f3;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 60px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        .special-thanks-icon {
+            flex-shrink: 0;
+        }
+        
+        .heart-icon {
+            font-size: 64px;
+        }
+        
+        .special-thanks-content {
+            flex: 1;
+        }
+        
+        .special-thanks-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .special-thanks-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .open-source {
+            background-color: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 60px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .open-source-content {
+            flex: 1;
+        }
+        
+        .open-source-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .open-source-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .contact-button {
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .contact-button:hover {
+            background-color: #1976d2;
+        }
+        
+        .open-source-illustration {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .handshake-icon {
+            font-size: 48px;
+        }
+        
+        .code-icon {
+            font-size: 32px;
+            color: #666;
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .about-footer {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #e0e0e0;
+            font-size: 14px;
+            color: #999;
+        }
+        
+        @media (max-width: 768px) {
+            .about-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .special-thanks {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .open-source {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .open-source-illustration {
+                order: -1;
+            }
+        }
+        
+        /* 生成活动页面样式 */
+        .generate-page {
+            min-height: calc(100vh - 60px);
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+        
+        .generate-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .generate-header {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .generate-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2196f3;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .generate-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .process-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        
+        .process-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background-color: #e0e0e0;
+            z-index: 1;
+        }
+        
+        .process-step.active::after {
+            background-color: #2196f3;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto 10px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .process-step.active .step-number {
+            background-color: #2196f3;
+            color: white;
+        }
+        
+        .step-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .step-description {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .generate-content {
+            background-color: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .main-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .left-section,
+        .right-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .section {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .section-icon {
+            font-size: 20px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+        }
+        
+        .section-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .zoom-button {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 12px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .zoom-button:hover {
+            background-color: #f5f7fa;
+        }
+        
+        .section-content {
+            margin-top: 15px;
+        }
+        
+        .image-container {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .image-tip {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(255,255,255,0.9);
+            padding: 10px;
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .task-list {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        
+        .task-list li {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .problem-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .problem-item {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .problem-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #2196f3;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .problem-input {
+            flex: 1;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .problem-input input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .location-button {
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .location-button:hover {
+            background-color: #f5f7fa;
+        }
+        
+        .analysis-input {
+            position: relative;
+        }
+        
+        .analysis-input textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 150px;
+        }
+        
+        .word-count {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .conclusion-input p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .count-input {
+            width: 60px;
+            padding: 4px 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .error-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .error-types label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .restart-button,
+        .submit-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .restart-button {
+            background-color: #f5f7fa;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .restart-button:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .submit-button {
+            background-color: #2196f3;
+            color: white;
+        }
+        
+        .submit-button:hover {
+            background-color: #1976d2;
+        }
+        
+        @media (max-width: 768px) {
+            .main-sections {
+                grid-template-columns: 1fr;
+            }
+            
+            .process-steps {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .process-step:not(:last-child)::after {
+                display: none;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-left">
+            <div class="logo">
+                <span>🤖</span>
+                <span>AI备课助手</span>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">首页</a>
+                <a href="#" class="nav-link" id="generate-tab">生成活动</a>
+                <a href="/fake-history" class="nav-link active">素材库</a>
+                <a href="#" class="nav-link" id="about-tab">关于我们</a>
+                <a href="#" class="nav-link">我的资源</a>
+            </div>
+        </div>
+        <div class="navbar-right">
+            <a href="#" class="help-link">
+                <span>📖</span>
+                <span>使用指南</span>
+            </a>
+            <a href="#" class="user-profile">
+                <span>👤</span>
+                <span>王老师</span>
+            </a>
+        </div>
+    </nav>
+    
+    <!-- 主容器 -->
+    <div class="main-container" id="main-container">
+        <!-- 左侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">资源分类</div>
+                <ul class="sidebar-links">
+                    <li><a href="#" class="sidebar-link active">全部资源</a></li>
+                    <li><a href="#" class="sidebar-link">历史文献</a></li>
+                    <li><a href="#" class="sidebar-link">课件资源</a></li>
+                    <li><a href="#" class="sidebar-link">教学活动</a></li>
+                    <li><a href="#" class="sidebar-link">图表资料</a></li>
+                    <li><a href="#" class="sidebar-link">拓展阅读</a></li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">热门主题</div>
+                <ul class="sidebar-links">
+                    <li><a href="#" class="sidebar-link">秦汉时期</a></li>
+                    <li><a href="#" class="sidebar-link">隋唐时期</a></li>
+                    <li><a href="#" class="sidebar-link">宋元时期</a></li>
+                    <li><a href="#" class="sidebar-link">明清时期</a></li>
+                    <li><a href="#" class="sidebar-link">近代史</a></li>
+                    <li><a href="#" class="sidebar-link">世界史</a></li>
+                    <li><a href="#" class="sidebar-link">制度变迁</a></li>
+                    <li><a href="#" class="sidebar-link">经济发展</a></li>
+                </ul>
+            </div>
+            
+            <div class="upload-section">
+                <div class="upload-title">上传资源，共建共享</div>
+                <div class="upload-description">分享优质教学资源，与更多老师共同成长</div>
+                <button class="upload-button">上传资源</button>
+            </div>
+        </div>
+        
+        <!-- 主内容区 -->
+        <main class="content">
+            <div class="page-header">
+                <h1 class="page-title">AI伪史之火眼金睛</h1>
+                <p class="page-description">精选教学资源，一键下载用于生成活动，助力高效备课与课堂教学</p>
+            </div>
+            
+            <!-- 搜索和筛选 -->
+            <div class="search-filter">
+                <div class="search-input">
+                    <input type="text" placeholder="搜索素材名、关键词、朝代、主题等">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <div class="filter-selects">
+                    <div class="filter-select">
+                        <select>
+                            <option>全部类型</option>
+                            <option>历史文献</option>
+                            <option>课件资源</option>
+                            <option>教学活动</option>
+                        </select>
+                    </div>
+                    <div class="filter-select">
+                        <select>
+                            <option>全部朝代</option>
+                            <option>秦汉</option>
+                            <option>隋唐</option>
+                            <option>宋元</option>
+                            <option>明清</option>
+                            <option>近代</option>
+                        </select>
+                    </div>
+                    <div class="filter-select">
+                        <select>
+                            <option>全部主题</option>
+                            <option>政治制度</option>
+                            <option>经济发展</option>
+                            <option>文化艺术</option>
+                            <option>社会生活</option>
+                        </select>
+                    </div>
+                    <button class="filter-button">
+                        <span>⚙️</span>
+                        <span>筛选</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 推荐资源 -->
+            <div class="recommended-section">
+                <div class="section-header">
+                    <h2 class="section-title">推荐资源</h2>
+                </div>
+                <div class="recommended-grid">
+                    <div class="resource-card">
+                        <div class="resource-header">
+                            <div class="resource-icon" style="background-color: #e3f2fd; color: #2196f3;">
+                                📜
+                            </div>
+                            <div class="resource-info">
+                                <h3>史记选段</h3>
+                                <p>历史文献</p>
+                            </div>
+                        </div>
+                        <p class="resource-description">司马迁《史记》中关于秦始皇统一六国、建立中央集权制度的记载。</p>
+                        <div class="resource-actions">
+                            <a href="#" class="action-link">预览</a>
+                            <a href="#" class="action-link">下载</a>
+                            <a href="#" class="action-link">用于课堂</a>
+                        </div>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <div class="resource-header">
+                            <div class="resource-icon" style="background-color: #e8f5e8; color: #4caf50;">
+                                🎓
+                            </div>
+                            <div class="resource-info">
+                                <h3>唐代到明代的婚姻与婚服</h3>
+                                <p>课件资源</p>
+                            </div>
+                        </div>
+                        <p class="resource-description">唐代到明代的婚姻与婚服的详细课件，包含历史背景和文化演变。</p>
+                        <div class="resource-actions">
+                            <a href="#" class="action-link">预览</a>
+                            <a href="#" class="action-link">下载</a>
+                            <a href="#" class="action-link">用于课堂</a>
+                        </div>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <div class="resource-header">
+                            <div class="resource-icon" style="background-color: #fff3e0; color: #ff9800;">
+                                📊
+                            </div>
+                            <div class="resource-info">
+                                <h3>宋代婚俗</h3>
+                                <p>教学活动</p>
+                            </div>
+                        </div>
+                        <p class="resource-description">基于史料的宋代婚俗研究活动设计与任务。</p>
+                        <div class="resource-actions">
+                            <a href="#" class="action-link">预览</a>
+                            <a href="#" class="action-link">下载</a>
+                            <a href="#" class="action-link">用于课堂</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 资源列表 -->
+            <div class="resources-section">
+                <div class="section-header">
+                    <h2 class="section-title">最新资源</h2>
+                </div>
+                <div class="resources-tabs">
+                    <button class="tab-button active">最新资源</button>
+                    <button class="tab-button">最热下载</button>
+                    <button class="tab-button">精选资源</button>
+                </div>
+                <div class="resources-table">
+                    <div class="table-header">
+                        <div>资源名称</div>
+                        <div>类型</div>
+                        <div>朝代</div>
+                        <div>主题</div>
+                        <div>更新时间</div>
+                        <div>操作</div>
+                    </div>
+                    <div class="table-row">
+                        <div>
+                            <div class="resource-name">史记选段</div>
+                            <div class="resource-description">包含史记中关于秦始皇统一六国、建立中央集权制度的记载。</div>
+                        </div>
+                        <div><span class="resource-type">历史文献</span></div>
+                        <div>秦汉</div>
+                        <div>政治制度</div>
+                        <div>2024-05-12</div>
+                        <div>
+                            <div class="table-actions">
+                                <a href="#" class="action-link">预览</a>
+                                <a href="#" class="action-link">下载</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-row">
+                        <div>
+                            <div class="resource-name">唐代到明代的婚姻与婚服</div>
+                            <div class="resource-description">唐代到明代的婚姻与婚服的详细课件，包含历史背景和文化演变。</div>
+                        </div>
+                        <div><span class="resource-type">课件资源</span></div>
+                        <div>唐宋明</div>
+                        <div>社会生活</div>
+                        <div>2024-05-10</div>
+                        <div>
+                            <div class="table-actions">
+                                <a href="#" class="action-link">预览</a>
+                                <a href="#" class="action-link">下载</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-row">
+                        <div>
+                            <div class="resource-name">宋代婚俗</div>
+                            <div class="resource-description">基于史料的宋代婚俗研究活动设计。</div>
+                        </div>
+                        <div><span class="resource-type">教学活动</span></div>
+                        <div>宋代</div>
+                        <div>社会生活</div>
+                        <div>2024-05-08</div>
+                        <div>
+                            <div class="table-actions">
+                                <a href="#" class="action-link">预览</a>
+                                <a href="#" class="action-link">下载</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 分页 -->
+                <div class="pagination">
+                    <button class="page-button">上一页</button>
+                    <button class="page-button active">1</button>
+                    <button class="page-button">2</button>
+                    <button class="page-button">3</button>
+                    <button class="page-button">下一页</button>
+                </div>
+            </div>
+        </main>
+        
+        <!-- 右侧详情面板 -->
+        <div class="detail-panel">
+            <div class="detail-header">
+                <h3 class="detail-title">史记选段</h3>
+                <div class="detail-meta">
+                    <span>历史文献</span>
+                    <span>秦汉</span>
+                    <span>政治制度</span>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h4 class="detail-section-title">资源简介</h4>
+                <div class="detail-content">
+                    包含史记中关于秦始皇统一六国、建立中央集权制度的记载，适合用于史料分析与课堂讲解。
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h4 class="detail-section-title">适用场景</h4>
+                <div class="detail-content">
+                    <span class="detail-meta">📚 史料分析</span>
+                    <span class="detail-meta">📝 课堂参考</span>
+                    <span class="detail-meta">🎓 课堂讲解</span>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h4 class="detail-section-title">资源预览</h4>
+                <div class="detail-content">
+                    "……秦王扫六合，虎视何雄哉！挥剑决浮云，诸侯尽西来。……"
+                    <p>——《史记·秦始皇本纪》（节选）</p>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h4 class="detail-section-title">文件信息</h4>
+                <div class="detail-info">
+                    <div class="detail-info-item">
+                        <span class="detail-info-label">格式：</span>
+                        <span>PDF</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <span class="detail-info-label">大小：</span>
+                        <span>2.5 MB</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <span class="detail-info-label">上传时间：</span>
+                        <span>2024-05-12</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <span class="detail-info-label">上传者：</span>
+                        <span>历史教研团队</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <span class="detail-info-label">使用次数：</span>
+                        <span>256次</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-actions">
+                <button class="detail-button download-button">下载文件</button>
+                <button class="detail-button analysis-button">用于史料分析</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 生成活动页面 -->
+    <div class="generate-page" id="generate-page" style="display: none;">
+        <div class="generate-container">
+            <div class="generate-header">
+                <h1 class="generate-title">AI伪史识别 · 火眼金睛</h1>
+                <p class="generate-subtitle">识别AI生成的历史图片中的不合理元素，培养历史判断与验证能力</p>
+                <div class="process-steps">
+                    <div class="process-step active">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-title">观察图片</div>
+                            <div class="step-description">整体浏览图片内容</div>
+                        </div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-title">发现问题</div>
+                            <div class="step-description">找出可疑不合理之处</div>
+                        </div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <div class="step-title">分析判断</div>
+                            <div class="step-description">结合历史知识判断</div>
+                        </div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <div class="step-title">验证证据</div>
+                            <div class="step-description">说明理由与史实依据</div>
+                        </div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <div class="step-title">总结反思</div>
+                            <div class="step-description">形成判断与反思</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="generate-content">
+                <div class="main-sections">
+                    <div class="left-section">
+                        <!-- AI生成的历史图片 -->
+                        <div class="section image-section">
+                            <div class="section-header">
+                                <div class="section-icon">🖼️</div>
+                                <h3 class="section-title">AI生成的历史图片（请仔细观察）</h3>
+                                <button class="zoom-button" onclick="openImageModal()">
+                                    <span>🔍</span>
+                                    <span>放大查看</span>
+                                </button>
+                            </div>
+                            <div class="section-content">
+                                <div class="image-container" id="imageContainer">
+                                    <img id="generatedImage" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Ancient%20Chinese%20market%20scene%20with%20traditional%20buildings%2C%20people%20in%20ancient%20clothing%2C%20but%20with%20a%20modern%20drone%20flying%20in%20the%20sky&image_size=landscape_16_9" alt="AI生成的历史图片">
+                                    <div class="image-markers" id="imageMarkers"></div>
+                                    <div class="image-tip">
+                                        <span>💡</span>
+                                        <span>提示：图片由AI生成，可能存在不符合历史事实的元素，请找出并分析。</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 任务说明 -->
+                        <div class="section task-section">
+                            <div class="section-header">
+                                <div class="section-icon">📋</div>
+                                <h3 class="section-title">任务说明</h3>
+                            </div>
+                            <div class="section-content">
+                                <ul class="task-list">
+                                    <li>这是一张AI生成的历史场景图，其中混入了一些不符合时代的元素。</li>
+                                    <li>请找出3-5处不合理之处，并结合历史知识进行分析与判断。</li>
+                                    <li>思考：为什么这些元素不合理？正确的历史情况或史实依据是什么？</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="right-section">
+                        <!-- 我发现的问题 -->
+                        <div class="section problem-section">
+                            <div class="section-header">
+                                <div class="section-icon">🔍</div>
+                                <h3 class="section-title">我发现的问题（请标记并描述）</h3>
+                                <div class="section-subtitle">建议标记3-5处</div>
+                            </div>
+                            <div class="section-content">
+                                <div class="problem-list">
+                                    <div class="problem-item">
+                                        <div class="problem-number">1</div>
+                                        <div class="problem-input">
+                                            <input type="text" placeholder="请点击图片标记，并描述不合理之处...">
+                                            <button class="location-button">📍</button>
+                                        </div>
+                                    </div>
+                                    <div class="problem-item">
+                                        <div class="problem-number">2</div>
+                                        <div class="problem-input">
+                                            <input type="text" placeholder="请点击图片标记，并描述不合理之处...">
+                                            <button class="location-button">📍</button>
+                                        </div>
+                                    </div>
+                                    <div class="problem-item">
+                                        <div class="problem-number">3</div>
+                                        <div class="problem-input">
+                                            <input type="text" placeholder="请点击图片标记，并描述不合理之处...">
+                                            <button class="location-button">📍</button>
+                                        </div>
+                                    </div>
+                                    <div class="problem-item">
+                                        <div class="problem-number">4</div>
+                                        <div class="problem-input">
+                                            <input type="text" placeholder="请点击图片标记，并描述不合理之处...">
+                                            <button class="location-button">📍</button>
+                                        </div>
+                                    </div>
+                                    <div class="problem-item">
+                                        <div class="problem-number">5</div>
+                                        <div class="problem-input">
+                                            <input type="text" placeholder="请点击图片标记，并描述不合理之处...">
+                                            <button class="location-button">📍</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 分析与判断 -->
+                        <div class="section analysis-section">
+                            <div class="section-header">
+                                <div class="section-icon">🧠</div>
+                                <h3 class="section-title">分析与判断（结合历史知识说明理由）</h3>
+                            </div>
+                            <div class="section-content">
+                                <div class="analysis-input">
+                                    <textarea placeholder="请解释这些元素为什么不符合历史事实，并写出正确的历史情况或史实依据..."></textarea>
+                                    <div class="word-count">0 / 500</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 我的结论 -->
+                        <div class="section conclusion-section">
+                            <div class="section-header">
+                                <div class="section-icon">📝</div>
+                                <h3 class="section-title">我的结论</h3>
+                            </div>
+                            <div class="section-content">
+                                <div class="conclusion-input">
+                                    <p>这张图片中共育 <input type="number" class="count-input" placeholder="0"> 处不合理之处，我认为AI生成内容存在</p>
+                                    <div class="error-types">
+                                        <label><input type="checkbox"> 时代错位</label>
+                                        <label><input type="checkbox"> 服饰错误</label>
+                                        <label><input type="checkbox"> 器物错误</label>
+                                        <label><input type="checkbox"> 现代元素</label>
+                                        <label><input type="checkbox"> 场景不符</label>
+                                        <label><input type="checkbox"> 其他</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="restart-button">
+                        <span>🔄</span>
+                        <span>重新开始</span>
+                    </button>
+                    <button class="submit-button">
+                        <span>📊</span>
+                        <span>提交分析报告</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 关于我们页面 -->
+    <div class="about-page" id="about-page" style="display: none;">
+        <div class="about-container">
+            <div class="about-header">
+                <h1 class="about-title">关于AI伪史之火眼金睛</h1>
+                <p class="about-subtitle">利用AI技术，帮助你在识别和分析历史资料中练就火眼金睛，洞察历史真相</p>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-cards">
+                    <div class="about-card">
+                        <div class="about-card-icon" style="background-color: #e3f2fd; color: #2196f3;">
+                            🔍
+                        </div>
+                        <h3 class="about-card-title">史料真伪分析</h3>
+                        <div class="about-card-divider" style="background-color: #2196f3;"></div>
+                        <p class="about-card-content">
+                            利用先进的AI技术，帮助用户识别和分析历史文献中的内容，发现可能的虚构或夸大成分。
+                        </p>
+                        <p class="about-card-footer">提升历史素养</p>
+                    </div>
+                    
+                    <div class="about-card">
+                        <div class="about-card-icon" style="background-color: #e8f5e8; color: #4caf50;">
+                            📸
+                        </div>
+                        <h3 class="about-card-title">知识+能力多维运用</h3>
+                        <div class="about-card-divider" style="background-color: #4caf50;"></div>
+                        <p class="about-card-content">
+                            历史背景知识与批判性思维能力缺一不可，帮助用户全面提升历史分析能力。
+                        </p>
+                        <p class="about-card-footer">培养批判思维</p>
+                    </div>
+                    
+                    <div class="about-card">
+                        <div class="about-card-icon" style="background-color: #fff3e0; color: #ff9800;">
+                            📚
+                        </div>
+                        <h3 class="about-card-title">AI素养融合</h3>
+                        <div class="about-card-divider" style="background-color: #ff9800;"></div>
+                        <p class="about-card-content">
+                            AI应用与AI伦理教育相结合，帮助用户正确使用AI工具，培养良好的AI素养。
+                        </p>
+                        <p class="about-card-footer">提升AI素养</p>
+                    </div>
+                </div>
+                
+                <div class="special-thanks">
+                    <div class="special-thanks-icon">
+                        <span class="heart-icon">💖</span>
+                    </div>
+                    <div class="special-thanks-content">
+                        <h3 class="special-thanks-title">特别致谢</h3>
+                        <p class="special-thanks-text">
+                            感谢贵州黔西南布依族苗族自治州贞丰县第二中学王莎老师对本项目的大力支持与宝贵建议。
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="open-source">
+                    <div class="open-source-content">
+                        <h3 class="open-source-title">
+                            <span>🤝</span>
+                            <span>开源共建</span>
+                        </h3>
+                        <p class="open-source-text">
+                            本项目由剑桥大学PilotX项目组开源，欢迎更多教育工作者和开发者参与共建，共同推动AI在教育领域的应用。
+                        </p>
+                        <button class="contact-button">
+                            <span>📧</span>
+                            <span>联系我们</span>
+                        </button>
+                    </div>
+                    <div class="open-source-illustration">
+                        <span class="handshake-icon">🤝</span>
+                        <span class="code-icon">&lt;/&gt;</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="about-footer">
+                <p>© 2024 AI备课助手 | 剑桥大学PilotX项目组</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const generateTab = document.getElementById('generate-tab');
+        const aboutTab = document.getElementById('about-tab');
+        const mainContainer = document.getElementById('main-container');
+        const generatePage = document.getElementById('generate-page');
+        const aboutPage = document.getElementById('about-page');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        generateTab.addEventListener('click', (e) => {
+            e.preventDefault();
+            mainContainer.style.display = 'none';
+            aboutPage.style.display = 'none';
+            generatePage.style.display = 'block';
+            navLinks.forEach(link => link.classList.remove('active'));
+            generateTab.classList.add('active');
+        });
+        
+        aboutTab.addEventListener('click', (e) => {
+            e.preventDefault();
+            mainContainer.style.display = 'none';
+            generatePage.style.display = 'none';
+            aboutPage.style.display = 'block';
+            navLinks.forEach(link => link.classList.remove('active'));
+            aboutTab.classList.add('active');
+        });
+    </script>
+    
+    <style>
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .chat-header {
+            background-color: #2196f3;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-header span {
+            font-weight: bold;
+        }
+        
+        .chat-header button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .chat-body {
+            background-color: white;
+            border-radius: 0 0 10px 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-body-hidden {
+            display: none;
+        }
+        
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        .user-message {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+        
+        .user-message p {
+            display: inline-block;
+            background-color: #e3f2fd;
+            padding: 10px 15px;
+            border-radius: 18px 18px 0 18px;
+            max-width: 80%;
+        }
+        
+        .bot-message {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+        
+        .bot-message p {
+            display: inline-block;
+            background-color: #f1f1f1;
+            padding: 10px 15px;
+            border-radius: 18px 18px 18px 0;
+            max-width: 80%;
+        }
+        
+        .analysis-result {
+            background-color: #f8f9fa;
+            border-left: 3px solid #2196f3;
+            margin: 10px 0;
+        }
+        
+        .analysis-result p {
+            background-color: transparent;
+            padding: 5px 0;
+        }
+        
+        .analysis-content {
+            background-color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .chat-input-area {
+            border-top: 1px solid #e0e0e0;
+            padding: 10px;
+        }
+        
+        .chat-input {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .chat-input input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            outline: none;
+        }
+        
+        .chat-input button {
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            width: auto;
+            padding: 0 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loading-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .hourglass {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .image-container {
+            position: relative;
+        }
+        
+        .image-markers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .marker {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 0, 0, 0.8);
+            border: 3px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            pointer-events: auto;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+        
+        .marker:hover {
+            background-color: rgba(255, 0, 0, 1);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+    </style>
+    
+    <!-- 折叠式聊天框 -->
+    <div class="chat-container">
+        <div class="chat-header" id="chat-header">
+            <span>AI助手</span>
+            <button id="chat-toggle">▼</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="chat-messages" id="chat-messages">
+                <div class="bot-message">
+                    <p>你好！我是AI助手，有什么可以帮助你的吗？</p>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <div class="chat-input">
+                    <input type="text" id="user-input" placeholder="请输入你的问题...">
+                    <button id="send-button">发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 聊天框折叠/展开功能
+        const chatHeader = document.getElementById('chat-header');
+        const chatBody = document.getElementById('chat-body');
+        const chatToggle = document.getElementById('chat-toggle');
+        
+        // 默认折叠聊天框
+        chatBody.classList.add('chat-body-hidden');
+        chatToggle.textContent = '▶';
+        
+        chatHeader.addEventListener('click', () => {
+            chatBody.classList.toggle('chat-body-hidden');
+            chatToggle.textContent = chatBody.classList.contains('chat-body-hidden') ? '▶' : '▼';
+        });
+        
+        // 发送消息功能
+        const sendButton = document.getElementById('send-button');
+        const userInput = document.getElementById('user-input');
+        const chatMessages = document.getElementById('chat-messages');
+        
+        // 显示图片
+        function displayImage(imageUrl) {
+            const imageContainer = document.querySelector('.image-container img');
+            if (imageContainer) {
+                imageContainer.src = imageUrl;
+                clearAllMarkers();
+                console.log('图片已更新:', imageUrl);
+            }
+        }
+        
+        // 图片标记功能
+        let markerCount = 0;
+        const maxMarkers = 5;
+        const markers = [];
+        
+        function initializeImageMarkers() {
+            const imageContainer = document.getElementById('imageContainer');
+            const imageMarkers = document.getElementById('imageMarkers');
+            
+            if (!imageContainer || !imageMarkers) return;
+            
+            imageContainer.addEventListener('click', function(e) {
+                if (markerCount >= maxMarkers) {
+                    alert('最多只能标记5处');
+                    return;
+                }
+                
+                const rect = imageContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                markerCount++;
+                
+                const marker = document.createElement('div');
+                marker.className = 'marker';
+                marker.textContent = markerCount;
+                marker.style.left = x + 'px';
+                marker.style.top = y + 'px';
+                
+                marker.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    removeMarker(marker, markerCount);
+                });
+                
+                imageMarkers.appendChild(marker);
+                markers.push(marker);
+                
+                // 自动聚焦到对应的输入框
+                focusProblemInput(markerCount);
+                
+                console.log(`标记 ${markerCount} 添加在位置: (${x}, ${y})`);
+            });
+        }
+        
+        function focusProblemInput(markerNumber) {
+            const problemItems = document.querySelectorAll('.problem-item');
+            if (problemItems[markerNumber - 1]) {
+                const input = problemItems[markerNumber - 1].querySelector('input');
+                if (input) {
+                    input.focus();
+                    input.placeholder = `请描述标记 ${markerNumber} 处的不合理之处...`;
+                }
+            }
+        }
+        
+        function removeMarker(marker, number) {
+            if (confirm(`确定要删除标记 ${number} 吗？`)) {
+                marker.remove();
+                markerCount--;
+                updateMarkerNumbers();
+            }
+        }
+        
+        function updateMarkerNumbers() {
+            const markerElements = document.querySelectorAll('.marker');
+            markerElements.forEach((marker, index) => {
+                marker.textContent = index + 1;
+            });
+        }
+        
+        function clearAllMarkers() {
+            const imageMarkers = document.getElementById('imageMarkers');
+            if (imageMarkers) {
+                imageMarkers.innerHTML = '';
+                markerCount = 0;
+                markers.length = 0;
+            }
+        }
+        
+        // 页面加载完成后初始化图片标记功能
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeImageMarkers();
+        });
+
+        function sendMessage() {
+            const message = userInput.value.trim();
+            
+            // 如果没有消息，不执行
+            if (!message) {
+                return;
+            }
+            
+            // 添加用户消息到聊天界面
+            let userMessageHtml = '<div class="user-message"><p>' + message + '</p></div>';
+            chatMessages.innerHTML += userMessageHtml;
+            
+            // 清空输入框
+            userInput.value = '';
+            
+            // 滚动到底部
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // 添加加载消息
+            const loadingId = 'loading-' + Date.now();
+            chatMessages.innerHTML += `
+                <div class="bot-message loading" id="${loadingId}">
+                    <div class="loading-content">
+                        <span class="hourglass"></span>
+                        <span>正在生成图片...</span>
+                    </div>
+                </div>
+            `;
+            
+            // 滚动到底部
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // 发送请求到服务器生成图片
+            fetch('/generate-image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ prompt: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 移除加载消息
+                document.getElementById(loadingId).remove();
+                
+                // 添加AI回复到聊天界面
+                let responseHtml = `
+                    <div class="bot-message">
+                        <p>图片生成成功！</p>
+                    </div>
+                `;
+                chatMessages.innerHTML += responseHtml;
+                
+                // 滚动到底部
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // 显示生成的图片
+                if (data.url) {
+                    displayImage(data.url);
+                }
+            })
+            .catch(error => {
+                // 移除加载消息
+                document.getElementById(loadingId).remove();
+                
+                console.error('Error:', error);
+                chatMessages.innerHTML += `
+                    <div class="bot-message">
+                        <p>抱歉，生成图片时发生错误，请稍后再试。</p>
+                    </div>
+                `;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        }
+        
+        // 发送按钮点击事件
+        sendButton.addEventListener('click', sendMessage);
+        
+        // 回车键发送消息
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // 图片放大查看功能
+        let currentZoom = 1;
+        let currentImageSrc = '';
+        
+        function openImageModal() {
+            const image = document.querySelector('.image-container img');
+            if (image && image.src) {
+                currentImageSrc = image.src;
+                currentZoom = 1;
+                
+                const modal = document.getElementById('imageModal');
+                const modalImage = document.getElementById('modalImage');
+                const zoomLevel = document.getElementById('zoomLevel');
+                
+                modalImage.src = currentImageSrc;
+                modalImage.style.transform = `scale(${currentZoom})`;
+                zoomLevel.textContent = `${Math.round(currentZoom * 100)}%`;
+                
+                modal.style.display = 'block';
+            }
+        }
+        
+        function closeImageModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+        
+        function zoomIn() {
+            if (currentZoom < 3) {
+                currentZoom += 0.1;
+                updateZoom();
+            }
+        }
+        
+        function zoomOut() {
+            if (currentZoom > 0.5) {
+                currentZoom -= 0.1;
+                updateZoom();
+            }
+        }
+        
+        function resetZoom() {
+            currentZoom = 1;
+            updateZoom();
+        }
+        
+        function updateZoom() {
+            const modalImage = document.getElementById('modalImage');
+            const zoomLevel = document.getElementById('zoomLevel');
+            
+            modalImage.style.transform = `scale(${currentZoom})`;
+            zoomLevel.textContent = `${Math.round(currentZoom * 100)}%`;
+        }
+        
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target == modal) {
+                closeImageModal();
+            }
+        }
+    </script>
+    
+    <!-- 图片放大查看模态框 -->
+    <div id="imageModal" class="modal" style="display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.9);">
+        <div style="position: relative; display: flex; justify-content: center; align-items: center; height: 100%;">
+            <button class="close-button" onclick="closeImageModal()" style="position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; font-weight: bold; cursor: pointer;">&times;</button>
+            <div class="modal-content" style="position: relative; max-width: 90%; max-height: 90%;">
+                <img id="modalImage" src="" alt="放大图片" style="max-width: 100%; max-height: 100%; cursor: zoom-in; transition: transform 0.2s ease;">
+                <div class="zoom-controls" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; background-color: rgba(0,0,0,0.7); padding: 10px; border-radius: 25px;">
+                    <button onclick="zoomOut()" style="background-color: white; color: black; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer;">-</button>
+                    <span id="zoomLevel" style="color: white; line-height: 40px;">100%</span>
+                    <button onclick="zoomIn()" style="background-color: white; color: black; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer;">+</button>
+                    <button onclick="resetZoom()" style="background-color: #2196f3; color: white; border: none; border-radius: 20px; padding: 0 15px; cursor: pointer;">重置</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

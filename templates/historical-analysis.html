@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>史料分析</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2em;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .analysis-container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            height: 70vh;
+            margin-bottom: 20px;
+        }
+        .pdf-column {
+            flex: 1;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .analysis-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .analysis-section {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        .analysis-section h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #2196f3;
+            padding-bottom: 10px;
+        }
+        .user-input-section {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .user-input-section h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #2196f3;
+            padding-bottom: 10px;
+        }
+        .user-textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            resize: none;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        .compare-button {
+            background-color: #ccc;
+            color: #666;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            border-radius: 50px;
+            cursor: not-allowed;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        .compare-button.active {
+            background-color: #2196f3;
+            color: white;
+            cursor: pointer;
+        }
+        .compare-button.active:hover {
+            background-color: #1976d2;
+        }
+        .pdf-placeholder {
+            text-align: center;
+            color: #666;
+            font-size: 1.2em;
+        }
+        .pdf-placeholder .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+        .pdf-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 10px;
+            display: none;
+        }
+        .pdf-frame.active {
+            display: block;
+        }
+        .back-button {
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            font-size: 1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+        .back-button:hover {
+            background-color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-button" onclick="window.location.href='/historical-materials'">← 返回</button>
+        <h1>史料分析</h1>
+        
+        <div class="analysis-container">
+            <div class="pdf-column">
+                <div class="pdf-placeholder" id="pdf-placeholder">
+                    <div class="icon">📄</div>
+                    <p>请在AI助手中上传史料文档</p>
+                </div>
+                <iframe class="pdf-frame" id="pdf-frame"></iframe>
+            </div>
+            <div class="analysis-column">
+                <div class="analysis-section">
+                    <h3>AI分析结果</h3>
+                    <div id="ai-analysis-result">
+                        <p>上传文档并发送分析请求后，AI分析结果将显示在这里。</p>
+                    </div>
+                </div>
+                <div class="user-input-section">
+                    <h3>个人总结</h3>
+                    <textarea class="user-textarea" id="user-summary" placeholder="请根据文档内容，总结时间、人物、核心主张以及背景信息..."></textarea>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="compare-button" id="compare-button">开始对比</button>
+                        <button class="show-result-button" id="show-result-button" style="display: none; background-color: #4caf50; color: white; border: none; padding: 12px 30px; font-size: 1em; border-radius: 50px; cursor: pointer; transition: background-color 0.3s ease;">显示结果</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 对比结果弹窗 -->
+    <div class="result-popup" id="result-popup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;">
+        <div style="background-color: white; border-radius: 10px; padding: 30px; width: 80%; max-width: 1000px; max-height: 80vh; overflow-y: auto; position: relative;">
+            <button id="close-popup" style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+            <h2 style="color: #333; margin-top: 0;">对比分析结果</h2>
+            <div id="comparison-result" style="white-space: pre-wrap; word-wrap: break-word; margin-top: 20px;">
+                <!-- 对比结果将显示在这里 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 折叠式聊天框 -->
+    <div class="chat-container">
+        <div class="chat-header" id="chat-header">
+            <span>AI助手</span>
+            <button id="chat-toggle">▼</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="chat-messages" id="chat-messages">
+                <div class="bot-message">
+                    <p>你好！我是史料分析助手，请上传史料文档，我将在上方窗口中显示并进行分析。</p>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <div class="uploaded-files" id="uploaded-files">
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="user-input" placeholder="请输入你的问题...">
+                    <input type="file" id="file-input" accept=".pdf" multiple style="display: none;">
+                    <button id="upload-button" title="上传史料文件">📎</button>
+                    <button id="send-button">发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 聊天框折叠/展开功能
+        const chatHeader = document.getElementById('chat-header');
+        const chatBody = document.getElementById('chat-body');
+        const chatToggle = document.getElementById('chat-toggle');
+        
+        chatHeader.addEventListener('click', () => {
+            chatBody.classList.toggle('chat-body-hidden');
+            chatToggle.textContent = chatBody.classList.contains('chat-body-hidden') ? '▶' : '▼';
+        });
+        
+        // PDF显示功能
+        const pdfPlaceholder = document.getElementById('pdf-placeholder');
+        const pdfFrame = document.getElementById('pdf-frame');
+        let currentPdfUrl = null;
+        
+        function displayPdf(url) {
+            pdfPlaceholder.style.display = 'none';
+            pdfFrame.src = url;
+            pdfFrame.classList.add('active');
+            currentPdfUrl = url;
+        }
+        
+        // 发送消息功能
+        const sendButton = document.getElementById('send-button');
+        const userInput = document.getElementById('user-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const uploadedFilesContainer = document.getElementById('uploaded-files');
+        
+        // 存储上传的文件信息
+        let uploadedFiles = [];
+        
+        function sendMessage() {
+            const message = userInput.value.trim();
+            
+            // 如果没有消息且没有上传文件，不执行
+            if (!message && uploadedFiles.length === 0) {
+                return;
+            }
+            
+            // 更新用户总结文本框的初始文本为聊天输入内容
+            document.getElementById('user-summary').value = message;
+            
+            // 添加用户消息到聊天界面
+            let userMessageHtml = '<div class="user-message"><p>';
+            if (uploadedFiles.length > 0) {
+                userMessageHtml += `📄 ${uploadedFiles.map(f => f.name).join(', ')}<br>`;
+            }
+            if (message) {
+                userMessageHtml += message;
+            }
+            userMessageHtml += '</p></div>';
+            chatMessages.innerHTML += userMessageHtml;
+            
+            // 清空输入框
+            userInput.value = '';
+            
+            // 滚动到底部
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // 添加加载消息
+            const loadingId = 'loading-' + Date.now();
+            chatMessages.innerHTML += `
+                <div class="bot-message loading" id="${loadingId}">
+                    <div class="loading-content">
+                        <span class="hourglass"></span>
+                        <span>正在分析史料...</span>
+                    </div>
+                </div>
+            `;
+            
+            // 滚动到底部
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // 判断是否有上传的PDF文件
+            if (uploadedFiles.length > 0) {
+                // 有PDF文件，调用分析接口
+                const formData = new FormData();
+                uploadedFiles.forEach((fileInfo, index) => {
+                    formData.append('file', fileInfo.file);
+                });
+                formData.append('task', message || '请分析这个史料文件，提取时间、人物、核心主张和背景信息');
+                
+                fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // 移除加载消息
+                    document.getElementById(loadingId).remove();
+                    
+                    // 添加分析结果到聊天界面
+                    let responseHtml = `
+                        <div class="bot-message">
+                            <p>${data.message || '分析完成'}</p>
+                        </div>
+                    `;
+                    
+                    if (data.ai_analysis) {
+                        responseHtml += `
+                            <div class="bot-message analysis-result">
+                                <p><strong>史料分析结果：</strong></p>
+                                <div class="analysis-content">${formatMarkdown(data.ai_analysis)}</div>
+                            </div>
+                        `;
+                        
+                        // 显示分析结果到AI分析结果区域（支持Markdown格式）
+                        document.getElementById('ai-analysis-result').innerHTML = `
+                            <div style="white-space: pre-wrap; word-wrap: break-word;">
+                                ${formatMarkdown(data.ai_analysis)}
+                            </div>
+                        `;
+                        
+                        // 设置用户总结文本框的提示内容
+                        document.getElementById('user-summary').placeholder = "请根据文档内容，总结时间、人物、核心主张以及背景信息...";
+                        
+                        // 检查是否可以启用对比按钮
+                        checkCompareButton();
+                    }
+                    
+                    chatMessages.innerHTML += responseHtml;
+                    // 滚动到底部
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    // 清空已上传的文件
+                    clearUploadedFiles();
+                })
+                .catch(error => {
+                    // 移除加载消息
+                    document.getElementById(loadingId).remove();
+                    
+                    console.error('Error:', error);
+                    chatMessages.innerHTML += `
+                        <div class="bot-message">
+                            <p>抱歉，分析史料时发生错误，请稍后再试。</p>
+                        </div>
+                    `;
+                    // 滚动到底部
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                });
+            } else {
+                // 没有PDF文件，使用普通聊天
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // 移除加载消息
+                    document.getElementById(loadingId).remove();
+                    
+                    // 添加机器人回复到聊天界面
+                    chatMessages.innerHTML += `
+                        <div class="bot-message">
+                            <p>${data.response}</p>
+                        </div>
+                    `;
+                    // 滚动到底部
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                })
+                .catch(error => {
+                    // 移除加载消息
+                    document.getElementById(loadingId).remove();
+                    
+                    console.error('Error:', error);
+                    chatMessages.innerHTML += `
+                        <div class="bot-message">
+                            <p>抱歉，我暂时无法回答你的问题，请稍后再试。</p>
+                        </div>
+                    `;
+                    // 滚动到底部
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                });
+            }
+        }
+        
+        // 清空已上传的文件
+        function clearUploadedFiles() {
+            uploadedFiles = [];
+            uploadedFilesContainer.innerHTML = '';
+        }
+        
+        // 更新上传文件显示
+        function updateUploadedFilesDisplay() {
+            uploadedFilesContainer.innerHTML = uploadedFiles.map((fileInfo, index) => `
+                <div class="uploaded-file-item">
+                    📄 ${fileInfo.name}
+                    <span class="remove-file" onclick="removeUploadedFile(${index})">×</span>
+                </div>
+            `).join('');
+        }
+        
+        // 移除单个上传的文件
+        function removeUploadedFile(index) {
+            uploadedFiles.splice(index, 1);
+            updateUploadedFilesDisplay();
+        }
+        
+        // 点击发送按钮
+        sendButton.addEventListener('click', sendMessage);
+        
+        // 按回车键发送
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // 检查是否可以启用对比按钮
+        function checkCompareButton() {
+            const aiAnalysis = document.getElementById('ai-analysis-result').textContent.trim();
+            const userSummary = document.getElementById('user-summary').value.trim();
+            const compareButton = document.getElementById('compare-button');
+            
+            if (aiAnalysis && aiAnalysis !== '上传文档并发送分析请求后，AI分析结果将显示在这里。' && userSummary) {
+                compareButton.classList.add('active');
+                compareButton.disabled = false;
+            } else {
+                compareButton.classList.remove('active');
+                compareButton.disabled = true;
+            }
+        }
+        
+        // 监听用户总结输入
+        document.getElementById('user-summary').addEventListener('input', checkCompareButton);
+        
+        // 存储对比结果
+        let comparisonResult = null;
+        
+        // 对比按钮点击事件
+        document.getElementById('compare-button').addEventListener('click', function() {
+            if (this.classList.contains('active')) {
+                const aiAnalysis = document.getElementById('ai-analysis-result').textContent.trim();
+                const userSummary = document.getElementById('user-summary').value.trim();
+                
+                if (aiAnalysis && userSummary) {
+                    // 显示加载状态
+                    this.innerHTML = '<span class="hourglass" style="display: inline-block; width: 16px; height: 16px; border: 2px solid #f3f3f3; border-top: 2px solid #2196f3; border-radius: 50%; animation: spin 1s linear infinite;"></span> 分析中...';
+                    
+                    // 准备对比请求
+                    const comparePrompt = `请分析以下两个史料分析结果，找出：
+1. 共同点
+2. 不同点
+3. AI遗漏的信息
+4. 用户遗漏的信息
+
+AI分析结果：
+${aiAnalysis}
+
+用户分析结果：
+${userSummary}`;
+                    
+                    // 发送对比请求
+                    fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message: comparePrompt })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // 恢复按钮状态
+                        this.innerHTML = '开始对比';
+                        
+                        // 存储对比结果
+                        comparisonResult = data.response;
+                        
+                        // 显示结果弹窗
+                        document.getElementById('comparison-result').innerHTML = formatMarkdown(comparisonResult);
+                        document.getElementById('result-popup').style.display = 'flex';
+                        
+                        // 显示"显示结果"按钮
+                        document.getElementById('show-result-button').style.display = 'inline-block';
+                    })
+                    .catch(error => {
+                        // 恢复按钮状态
+                        this.innerHTML = '开始对比';
+                        
+                        console.error('Error:', error);
+                        alert('对比分析时发生错误，请稍后再试。');
+                    });
+                }
+            }
+        });
+        
+        // 关闭弹窗按钮
+        document.getElementById('close-popup').addEventListener('click', function() {
+            document.getElementById('result-popup').style.display = 'none';
+        });
+        
+        // 显示结果按钮
+        document.getElementById('show-result-button').addEventListener('click', function() {
+            if (comparisonResult) {
+                document.getElementById('comparison-result').innerHTML = formatMarkdown(comparisonResult);
+                document.getElementById('result-popup').style.display = 'flex';
+            }
+        });
+        
+        // Markdown格式化函数
+        function formatMarkdown(text) {
+            if (!text) return '';
+            
+            // 处理标题
+            text = text.replace(/^# (.*$)/gim, '<h1 style="color: #333; margin-top: 20px; margin-bottom: 10px;">$1</h1>');
+            text = text.replace(/^## (.*$)/gim, '<h2 style="color: #333; margin-top: 18px; margin-bottom: 8px;">$1</h2>');
+            text = text.replace(/^### (.*$)/gim, '<h3 style="color: #333; margin-top: 16px; margin-bottom: 6px;">$1</h3>');
+            
+            // 处理粗体
+            text = text.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
+            
+            // 处理斜体
+            text = text.replace(/\*(.*?)\*/gim, '<em>$1</em>');
+            
+            // 处理无序列表
+            text = text.replace(/^\s*\-\s+(.*$)/gim, '<li style="margin-bottom: 5px;">$1</li>');
+            text = text.replace(/(<li[^>]*>.*<\/li>)/s, '<ul style="margin-left: 20px; margin-bottom: 15px;">$1</ul>');
+            
+            // 处理有序列表
+            text = text.replace(/^\s*\d+\.\s+(.*$)/gim, '<li style="margin-bottom: 5px;">$1</li>');
+            text = text.replace(/(<li[^>]*>.*<\/li>)/s, '<ol style="margin-left: 20px; margin-bottom: 15px;">$1</ol>');
+            
+            // 处理表格（简单处理，实际可能需要更复杂的解析）
+            if (text.includes('|')) {
+                text = text.replace(/\|.*\|/gim, function(tableLine) {
+                    if (tableLine.includes('---')) {
+                        return ''; // 移除分隔线
+                    }
+                    const cells = tableLine.split('|').filter(cell => cell.trim() !== '');
+                    if (cells.length > 0) {
+                        return '<tr>' + cells.map(cell => '<td style="border: 1px solid #ddd; padding: 8px;">' + cell.trim() + '</td>').join('') + '</tr>';
+                    }
+                    return tableLine;
+                });
+                text = text.replace(/(<tr>.*<\/tr>)/s, '<table style="border-collapse: collapse; margin: 15px 0; width: 100%;"><tbody>$1</tbody></table>');
+            }
+            
+            // 处理段落
+            text = text.replace(/\n\n/gim, '</p><p>');
+            text = '<p>' + text + '</p>';
+            
+            return text;
+        }
+        
+        // 文件上传功能
+        const uploadButton = document.getElementById('upload-button');
+        const fileInput = document.getElementById('file-input');
+        
+        // 点击上传按钮触发文件选择
+        uploadButton.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // 处理文件选择
+        fileInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                let validFiles = [];
+                let hasInvalidFiles = false;
+                
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                        // 添加到上传文件列表
+                        uploadedFiles.push({
+                            file: file,
+                            name: file.name
+                        });
+                        validFiles.push(file.name);
+                        
+                        // 在大窗口中显示PDF
+                        const pdfUrl = URL.createObjectURL(file);
+                        displayPdf(pdfUrl);
+                    } else {
+                        hasInvalidFiles = true;
+                    }
+                }
+                
+                // 更新显示
+                updateUploadedFilesDisplay();
+                
+                // 显示消息
+                if (validFiles.length > 0) {
+                    chatMessages.innerHTML += `
+                        <div class="bot-message">
+                            <p>已添加史料文件: ${validFiles.join(', ')}。点击发送开始分析。</p>
+                        </div>
+                    `;
+                    // 设置默认分析提示
+                    userInput.value = "请分析文档中的时间、人物、核心主张以及背景信息并逐一列出。";
+                    
+                    // 重置对比结果
+                    comparisonResult = null;
+                    document.getElementById('show-result-button').style.display = 'none';
+                    document.getElementById('ai-analysis-result').innerHTML = '<p>上传文档并发送分析请求后，AI分析结果将显示在这里。</p>';
+                    document.getElementById('user-summary').value = '';
+                }
+                
+                if (hasInvalidFiles) {
+                    chatMessages.innerHTML += `
+                        <div class="bot-message">
+                            <p>部分文件不是PDF格式，已忽略。</p>
+                        </div>
+                    `;
+                }
+                
+                // 滚动到底部
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // 重置文件输入
+                fileInput.value = '';
+            }
+        });
+    </script>
+    
+    <style>
+        /* 聊天框样式 */
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .chat-header {
+            background-color: #2196f3;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-header span {
+            font-weight: bold;
+        }
+        
+        .chat-header button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .chat-body {
+            background-color: white;
+            border-radius: 0 0 10px 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-body-hidden {
+            display: none;
+        }
+        
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        .user-message {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+        
+        .user-message p {
+            display: inline-block;
+            background-color: #e3f2fd;
+            padding: 10px 15px;
+            border-radius: 18px 18px 0 18px;
+            max-width: 80%;
+        }
+        
+        .bot-message {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+        
+        .bot-message p {
+            display: inline-block;
+            background-color: #f1f1f1;
+            padding: 10px 15px;
+            border-radius: 18px 18px 18px 0;
+            max-width: 80%;
+        }
+        
+        .analysis-result {
+            background-color: #f8f9fa;
+            border-left: 3px solid #2196f3;
+            margin: 10px 0;
+        }
+        
+        .analysis-result p {
+            background-color: transparent;
+            padding: 5px 0;
+        }
+        
+        .analysis-content {
+            background-color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .chat-input-area {
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .uploaded-files {
+            padding: 8px 10px;
+            max-height: 80px;
+            overflow-y: auto;
+            background-color: #fafafa;
+        }
+        
+        .uploaded-file-item {
+            display: inline-flex;
+            align-items: center;
+            background-color: #e3f2fd;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin-right: 8px;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #1976d2;
+        }
+        
+        .uploaded-file-item .remove-file {
+            margin-left: 8px;
+            cursor: pointer;
+            color: #666;
+            font-weight: bold;
+        }
+        
+        .uploaded-file-item .remove-file:hover {
+            color: #f44336;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            margin-right: 10px;
+        }
+        
+        #upload-button {
+            background-color: #f1f1f1;
+            color: #666;
+            border: none;
+            padding: 0 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-right: 5px;
+            font-size: 16px;
+        }
+        
+        #upload-button:hover {
+            background-color: #e0e0e0;
+        }
+        
+        #send-button {
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        #send-button:hover {
+            background-color: #1976d2;
+        }
+        
+        /* 加载动画样式 */
+        .loading-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .hourglass {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #2196f3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</body>
+</html>
