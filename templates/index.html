@@ -566,6 +566,12 @@
             { value: "bias-detection", text: "AI立场识别与偏见检测" }
         ];
         
+        // 地理学科工具选项
+        const geographyTools = [
+            { value: "", text: "请选择功能" },
+            { value: "geography-roleplay", text: "AI地理剧本杀" }
+        ];
+        
         // 监听学科选择变化
         document.getElementById('subject-select').addEventListener('change', function() {
             const selectedSubject = this.value;
@@ -582,8 +588,19 @@
                     option.textContent = tool.text;
                     historyToolSelect.appendChild(option);
                 });
+            } else if (selectedSubject === '地理') {
+                // 启用地理工具选择
+                historyToolSelect.disabled = false;
+                // 清空并添加地理工具选项
+                historyToolSelect.innerHTML = '';
+                geographyTools.forEach(tool => {
+                    const option = document.createElement('option');
+                    option.value = tool.value;
+                    option.textContent = tool.text;
+                    historyToolSelect.appendChild(option);
+                });
             } else {
-                // 禁用并重置历史工具选择
+                // 禁用并重置工具选择
                 historyToolSelect.disabled = true;
                 historyToolSelect.innerHTML = '<option value="">请选择功能</option>';
             }
@@ -600,6 +617,8 @@
                 window.location.href = '/time-travel';
             } else if (selectedSubject === '历史' && selectedTool === 'fake-detection') {
                 window.location.href = '/fake-history';
+            } else if (selectedSubject === '地理' && selectedTool === 'geography-roleplay') {
+                window.location.href = '/geography_roleplay';
             } else {
                 // 显示功能正在开发中的提示框
                 alert('功能开发中');
