@@ -50,6 +50,10 @@ def fake_history():
 @app.route('/fake-history-scenario')
 def fake_history_scenario():
     return render_template('fake-history-scenario.html')
+
+@app.route('/geography_roleplay')
+def geography_roleplay():
+    return render_template('geography_roleplay.html')
     
 @app.route('/quiz')
 def quiz():
