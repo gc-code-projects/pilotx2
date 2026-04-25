@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI语文思辨辩论场 - 辩论场</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --border:#e5ecf5;
+      --text:#203047;
+      --muted:#718198;
+      --primary:#2f7cff;
+      --primary-weak:#eaf2ff;
+      --green:#21b26b;
+      --green-weak:#edf9f2;
+      --red:#ff6d6d;
+      --red-weak:#fff2f2;
+      --purple:#8d6bff;
+      --purple-weak:#f4efff;
+      --orange:#ff9d2f;
+      --orange-weak:#fff5e9;
+      --shadow:0 8px 22px rgba(35,72,122,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      min-height:100%;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+      background:linear-gradient(180deg,#f8fbff 0%,#f3f7fc 100%);
+      color:var(--text);
+    }
+    body{padding:16px}
+    .topbar{
+      background:rgba(255,255,255,.94);
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+      border-radius:24px;
+      padding:16px 20px;
+      display:grid;
+      grid-template-columns:280px 1fr 260px;
+      gap:12px;
+      align-items:center;
+      margin-bottom:16px;
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,#57a3ff,#2f7cff);
+      color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;
+      box-shadow:0 10px 24px rgba(47,124,255,.26)
+    }
+    .brand h1{margin:0;font-size:20px;line-height:1.1}
+    .brand p{margin:4px 0 0;color:var(--muted);font-size:12px}
+    .steps{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+    .step{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#7a879b}
+    .num{
+      width:30px;height:30px;border-radius:50%;background:#fff;border:2px solid #d8e1ed;
+      display:flex;align-items:center;justify-content:center;flex:none
+    }
+    .step.active{color:var(--primary)}
+    .step.active .num{background:var(--primary);border-color:var(--primary);color:#fff}
+    .line{width:44px;height:4px;border-radius:999px;background:#dfe7f3}
+    .line.active{background:var(--primary)}
+    .actions{display:flex;justify-content:flex-end;gap:10px;align-items:center}
+    .pill-btn{
+      border:1px solid var(--border);background:#fff;border-radius:999px;padding:10px 14px;
+      font-size:13px;font-weight:700;color:#4c5c72;cursor:pointer
+    }
+    .avatar{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
+    .avatar .pic{
+      width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#ffd36b,#ff9f2f);
+      display:flex;align-items:center;justify-content:center
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:280px 1fr 330px;
+      gap:16px;
+      min-height:calc(100vh - 120px);
+      align-items:start;
+    }
+    .card{
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);
+    }
+    .panel{padding:16px}
+    .section-title{margin:0 0 12px;font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px}
+    .sub{margin:-4px 0 12px;color:var(--muted);font-size:12px}
+    .small{font-size:12px;color:var(--muted)}
+    .left-col,.center-col,.right-col{display:flex;flex-direction:column;gap:16px}
+
+    .topic-box{
+      background:#f8fbff;border:1px solid #dce7ff;border-radius:16px;padding:14px
+    }
+    .topic-box .label{font-size:13px;color:#4d6280;font-weight:700;margin-bottom:6px}
+    .topic-box .topic{font-size:18px;line-height:1.45;font-weight:900}
+    .bullets{padding-left:18px;margin:8px 0 0}
+    .bullets li{margin:6px 0;color:#4a5b72;font-size:13px;line-height:1.55}
+    .camp-row{display:flex;gap:10px}
+    .camp{
+      flex:1;border:2px solid #dbe6f4;background:#fff;border-radius:14px;padding:12px 10px;text-align:center;
+      font-weight:800;cursor:pointer;user-select:none
+    }
+    .camp.active{border-color:var(--primary);background:#f8fbff;color:var(--primary)}
+    .task-list{padding-left:18px;margin:0}
+    .task-list li{margin:8px 0;color:#41536c;font-size:13px;line-height:1.55}
+    .quick-btn{
+      width:100%;display:flex;justify-content:space-between;align-items:center;
+      padding:12px 14px;border-radius:14px;border:1px solid var(--border);background:#fff;font-size:13px;font-weight:700;margin-top:10px;
+      cursor:pointer
+    }
+    .quick-btn.green{background:var(--green-weak);border-color:#d8f2e4;color:var(--green)}
+    .quick-btn.blue{background:var(--primary-weak);border-color:#dce7ff;color:var(--primary)}
+    .quick-btn.purple{background:var(--purple-weak);border-color:#e5dcff;color:var(--purple)}
+
+    .arena-header{
+      display:flex;justify-content:space-between;align-items:center;margin-bottom:12px
+    }
+    .arena-help{
+      border:none;background:var(--primary-weak);color:var(--primary);
+      border-radius:12px;padding:10px 14px;font-size:13px;font-weight:800;cursor:pointer
+    }
+    .moderator{
+      width:180px;margin:0 auto 10px;padding:10px 12px;border-radius:16px;background:#fff;border:1px solid var(--border);
+      display:flex;gap:10px;align-items:center;justify-content:center
+    }
+    .mod-avatar{
+      width:42px;height:42px;border-radius:14px;background:#eef4ff;display:flex;align-items:center;justify-content:center;font-size:22px
+    }
+
+    .arena{
+      position:relative;
+      min-height:520px;
+      border-radius:22px;
+      background:radial-gradient(circle at center,#fffaf4 0%,#f7efe2 55%,#f2e6d5 100%);
+      border:1px solid #eadfce;
+      overflow:hidden;
+      padding:26px 18px 18px;
+    }
+    .table{
+      position:absolute;left:50%;top:52%;
+      transform:translate(-50%,-50%);
+      width:300px;height:270px;
+      background:linear-gradient(180deg,#b97841 0%,#9e6031 100%);
+      border-radius:42% 42% 36% 36% / 28% 28% 30% 30%;
+      box-shadow:inset 0 6px 18px rgba(255,255,255,.25), 0 18px 30px rgba(91,54,18,.18);
+      border:8px solid #c9925a;
+      display:flex;align-items:center;justify-content:center;
+      text-align:center;color:#fff7ea;padding:20px;
+    }
+    .table-inner{
+      width:72%;height:72%;border:2px solid rgba(255,243,222,.35);border-radius:28%;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px
+    }
+    .seat{
+      position:absolute;
+      width:148px;min-height:88px;
+      background:#fff;border:2px solid #e2ebf8;border-radius:18px;
+      padding:10px 12px;display:flex;gap:10px;align-items:center;cursor:pointer;
+      box-shadow:0 10px 20px rgba(0,0,0,.05);
+      transition:all .18s ease;
+    }
+    .seat:hover{transform:translateY(-2px)}
+    .seat.selected{
+      border-color:var(--primary);
+      background:#f9fbff;
+      box-shadow:0 12px 26px rgba(47,124,255,.12);
+    }
+    .seat-avatar{
+      width:46px;height:46px;border-radius:14px;background:#eef4ff;
+      display:flex;align-items:center;justify-content:center;font-size:24px;flex:none
+    }
+    .seat h4{margin:0 0 4px;font-size:14px}
+    .seat p{margin:0;font-size:11px;color:var(--muted);line-height:1.45}
+    .status{font-size:11px;font-weight:800;margin-top:4px}
+    .status.ok{color:var(--green)}
+    .status.join{color:var(--purple)}
+    .status.lock{color:#8e9bb0}
+
+    .s1{left:12px;top:82px}
+    .s2{left:18px;top:186px}
+    .s3{left:22px;top:292px}
+    .s4{left:28px;top:398px}
+    .s5{right:12px;top:82px}
+    .s6{right:18px;top:186px}
+    .s7{right:22px;top:292px}
+    .s8{right:28px;top:398px}
+
+    .speaker{
+      display:flex;align-items:center;justify-content:space-between;gap:8px
+    }
+    .speaker .who{font-size:12px;color:#64758b;font-weight:700}
+    .timer-box{
+      display:grid;grid-template-columns:1fr 1fr;gap:12px;
+      border:1px solid #dfe7f3;border-radius:16px;padding:14px;margin-bottom:12px
+    }
+    .timer{
+      font-size:48px;line-height:1;font-weight:900;color:var(--primary);text-align:center
+    }
+    .pause{
+      margin-top:8px;border:none;background:#edf4ff;color:var(--primary);
+      border-radius:999px;padding:8px 12px;font-weight:800;cursor:pointer
+    }
+    .order{
+      display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px;font-weight:700;color:#516178
+    }
+    .oitem{display:flex;align-items:center;gap:6px}
+    .dot{
+      width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px
+    }
+    .blue{background:var(--primary)} .red{background:var(--red)} .purple{background:var(--purple)} .orange{background:var(--orange)}
+    .dual{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .mini{border-radius:14px;padding:12px;border:1px solid var(--border)}
+    .mini h5{margin:0 0 8px;font-size:14px}
+    .mini ul{margin:0;padding-left:18px;font-size:12px;line-height:1.7;color:#4a5b72}
+    .mini.green{background:var(--green-weak);border-color:#d8f2e4}
+    .mini.red{background:var(--red-weak);border-color:#ffd9d9}
+    .evidence-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .evi{
+      border-radius:14px;padding:12px;border:1px solid var(--border);min-height:94px
+    }
+    .evi h6{margin:6px 0 6px;font-size:13px}
+    .evi p{margin:0;font-size:12px;line-height:1.45;color:#5d6b80}
+
+    .draft{
+      display:grid;grid-template-columns:1fr auto;gap:14px;align-items:end
+    }
+    textarea{
+      width:100%;min-height:130px;resize:none;
+      border:1px solid var(--border);border-radius:14px;padding:12px 14px;outline:none;
+      font-size:14px;background:#fff
+    }
+    .btns{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{
+      border-radius:14px;padding:14px 18px;font-size:14px;font-weight:800;cursor:pointer;border:1px solid #d7e3f5;background:#fff;color:var(--primary)
+    }
+    .btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+    .note{margin-top:8px;font-size:12px;color:#7a879b}
+
+    .drawer{
+      position:fixed;right:18px;bottom:18px;width:360px;max-width:calc(100vw - 36px);
+      background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:0 18px 40px rgba(0,0,0,.12);
+      padding:14px;display:none;z-index:10
+    }
+    .drawer.open{display:block}
+    .drawer h3{margin:0 0 10px;font-size:16px}
+    .drawer .close{
+      position:absolute;right:10px;top:10px;border:none;background:#f2f6fb;border-radius:10px;padding:6px 10px;cursor:pointer
+    }
+    .hint{
+      position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+      background:#203047;color:#fff;padding:10px 14px;border-radius:999px;font-size:13px;box-shadow:var(--shadow)
+    }
+    @media (max-width: 1360px){
+      .layout{grid-template-columns:1fr}
+      .topbar{grid-template-columns:1fr}
+      .actions{justify-content:flex-start}
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">💬</div>
+      <div>
+        <h1>AI语文辩论场</h1>
+        <p>在语文课堂中开展 AI 素养辩论活动</p>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div>议题导入</div></div>
+      <div class="line active"></div>
+      <div class="step"><div class="num">2</div><div>资料分析</div></div>
+      <div class="line active"></div>
+      <div class="step"><div class="num">3</div><div>选择阵营</div></div>
+      <div class="line active"></div>
+      <div class="step active"><div class="num">4</div><div>辩论场</div></div>
+      <div class="line"></div>
+      <div class="step"><div class="num">5</div><div>反思评价</div></div>
+    </div>
+    <div class="actions">
+      <button class="pill-btn">🏆 排行榜</button>
+      <button class="pill-btn">📋 我的记录</button>
+      <div class="avatar"><div class="pic">🧑‍🎓</div><div>学生001</div></div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="left-col">
+      <div class="card panel">
+        <h3 class="section-title">🗂️ 辩题与阵营</h3>
+        <div class="topic-box">
+          <div class="label">辩题：</div>
+          <div class="topic">AI生成内容能否提升<br>中学生语文写作能力？</div>
+        </div>
+        <div class="small" style="font-weight:800;margin-top:12px">背景简介</div>
+        <ul class="bullets">
+          <li>AI工具在写作中的应用日益普及，引发广泛讨论。</li>
+          <li>支持者认为AI能提供思路与素材，提升效率。</li>
+          <li>反对者担忧依赖AI会削弱原创思维与表达能力。</li>
+        </ul>
+      </div>
+
+      <div class="card panel">
+        <h3 class="section-title">👥 我的阵营</h3>
+        <div class="camp-row">
+          <div class="camp active" id="campPro">正方</div>
+          <div class="camp" id="campCon">反方</div>
+        </div>
+      </div>
+
+      <div class="card panel">
+        <h3 class="section-title">🎯 我的任务提示</h3>
+        <div class="small" id="taskRoleLabel" style="margin-bottom:8px">当前：正方一辩</div>
+        <ul class="task-list" id="taskList">
+          <li>提出立场定义，明确正方核心观点</li>
+          <li>概括论据方向，搭建论证框架</li>
+          <li>完成开篇立论，吸引听众注意</li>
+        </ul>
+      </div>
+
+      <div class="card panel">
+        <h3 class="section-title">🤖 AI辩论助手</h3>
+        <button class="quick-btn green" onclick="fillPrompt('请帮我生成正方一辩的立论结构')">生成立论思路与结构建议 <span>›</span></button>
+        <button class="quick-btn blue" onclick="fillPrompt('请提供支持正方的相关论据与素材')">提供相关论据与素材 <span>›</span></button>
+        <button class="quick-btn purple" onclick="fillPrompt('请预测反方观点并给出反驳策略')">预测反方观点与反驳策略 <span>›</span></button>
+      </div>
+    </div>
+
+    <div class="center-col">
+      <div class="card panel">
+        <div class="arena-header">
+          <h3 class="section-title" style="margin:0">⚖️ 模拟辩论场</h3>
+          <button class="arena-help">👉 点击座位落座</button>
+        </div>
+
+        <div class="moderator">
+          <div class="mod-avatar">👨‍🏫</div>
+          <div>
+            <div style="font-size:14px;font-weight:800">主持 / 计时</div>
+            <div class="small">张老师 🎙️</div>
+          </div>
+        </div>
+
+        <div class="arena">
+          <div class="table">
+            <div class="table-inner">
+              <div style="font-size:38px">🏛️</div>
+              <div style="font-size:20px;font-weight:900">辩论公约</div>
+              <div style="font-size:14px">尊重 · 理性 · 倾听 · 求真</div>
+            </div>
+          </div>
+
+          <div class="seat s1 selected" data-role="正方一辩" data-camp="正方">
+            <div class="seat-avatar">👨‍🎓</div>
+            <div>
+              <h4>正方一辩</h4>
+              <p>你（未落座）</p>
+              <div class="status ok">● 可选择</div>
+            </div>
+          </div>
+          <div class="seat s2" data-role="正方二辩" data-camp="正方">
+            <div class="seat-avatar">👨‍💼</div>
+            <div>
+              <h4>正方二辩</h4>
+              <p>待选择</p>
+              <div class="status ok">● 可选择</div>
+            </div>
+          </div>
+          <div class="seat s3" data-role="正方三辩" data-camp="正方">
+            <div class="seat-avatar">🧑</div>
+            <div>
+              <h4>正方三辩</h4>
+              <p>待选择</p>
+              <div class="status ok">● 可选择</div>
+            </div>
+          </div>
+          <div class="seat s4" data-role="正方四辩" data-camp="正方">
+            <div class="seat-avatar">👨‍💻</div>
+            <div>
+              <h4>正方四辩</h4>
+              <p>待选择</p>
+              <div class="status lock">🔒 已锁定</div>
+            </div>
+          </div>
+
+          <div class="seat s5" data-role="反方一辩" data-camp="反方">
+            <div class="seat-avatar">👩‍🎓</div>
+            <div>
+              <h4>反方一辩</h4>
+              <p>待选择</p>
+              <div class="status ok">● 可选择</div>
+            </div>
+          </div>
+          <div class="seat s6" data-role="反方二辩" data-camp="反方">
+            <div class="seat-avatar">👩</div>
+            <div>
+              <h4>反方二辩</h4>
+              <p>待选择</p>
+              <div class="status ok">● 可选择</div>
+            </div>
+          </div>
+          <div class="seat s7" data-role="反方三辩" data-camp="反方">
+            <div class="seat-avatar">👨‍💻</div>
+            <div>
+              <h4>反方三辩</h4>
+              <p>已加入：李思远</p>
+              <div class="status join">◉ 已加入</div>
+            </div>
+          </div>
+          <div class="seat s8" data-role="反方四辩" data-camp="反方">
+            <div class="seat-avatar">👩‍💼</div>
+            <div>
+              <h4>反方四辩</h4>
+              <p>待选择</p>
+              <div class="status lock">🔒 已锁定</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card panel">
+        <h3 class="section-title">📝 我的发言草稿</h3>
+        <div class="draft">
+          <div>
+            <textarea id="draft" placeholder="请输入你的立论或驳论内容…"></textarea>
+            <div class="note">AI建议仅供参考，请结合材料与个人判断进行修改。</div>
+          </div>
+          <div class="btns">
+            <button class="btn" onclick="saveDraft()">💾 保存草稿</button>
+            <button class="btn" onclick="generateSuggestion()">✨ 生成建议</button>
+            <button class="btn primary" onclick="submitSpeech()">📤 提交发言</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col">
+      <div class="card panel">
+        <h3 class="section-title">⏱️ 本轮信息</h3>
+        <div class="timer-box">
+          <div>
+            <div class="small">当前阶段</div>
+            <div style="font-size:28px;font-weight:900;color:var(--primary)">立论阶段</div>
+            <div style="font-weight:800;margin-top:8px">当前发言方：<span id="currentCamp">正方</span></div>
+          </div>
+          <div>
+            <div class="small" style="text-align:center">剩余时间</div>
+            <div class="timer" id="timer">02:35</div>
+            <div style="text-align:center"><button class="pause" id="pauseBtn">暂停计时</button></div>
+          </div>
+        </div>
+
+        <h3 class="section-title">🔁 发言顺序</h3>
+        <div class="order">
+          <div class="oitem"><div class="dot blue">正</div><span>正方一辩</span></div>
+          <span>→</span>
+          <div class="oitem"><div class="dot red">反</div><span>反方一辩</span></div>
+          <span>→</span>
+          <div class="oitem"><div class="dot blue">正</div><span>正方二辩</span></div>
+          <span>→</span>
+          <div class="oitem"><div class="dot red">反</div><span>反方二辩</span></div>
+          <span>→</span>
+          <div class="oitem"><div class="dot purple">辩</div><span>自由辩论</span></div>
+          <span>→</span>
+          <div class="oitem"><div class="dot orange">总</div><span>总结陈词</span></div>
+        </div>
+
+        <div class="dual">
+          <div class="mini green">
+            <h5>支持观点建议</h5>
+            <ul>
+              <li>提供写作思路，拓展表达视角</li>
+              <li>丰富语言素材，提高写作效率</li>
+              <li>及时反馈修改，促进能力提升</li>
+            </ul>
+          </div>
+          <div class="mini red">
+            <h5>可能反驳点</h5>
+            <ul>
+              <li>可能导致思维惰性与依赖</li>
+              <li>削弱原创性与独立思考能力</li>
+              <li>存在内容准确性与价值偏差</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 class="section-title" style="margin-top:14px">🧩 论据卡片</h3>
+        <div class="evidence-grid">
+          <div class="evi" style="background:#f5f9ff">
+            <div style="font-size:20px">🧠</div>
+            <h6>课堂效率</h6>
+            <p>缩短构思时间<br>提升产出效率</p>
+          </div>
+          <div class="evi" style="background:#edf9f2">
+            <div style="font-size:20px">🛡️</div>
+            <h6>原创性风险</h6>
+            <p>内容同质化<br>缺乏独立思考</p>
+          </div>
+          <div class="evi" style="background:#f4efff">
+            <div style="font-size:20px">✍️</div>
+            <h6>语言组织能力</h6>
+            <p>优化表达结构<br>提升语言质量</p>
+          </div>
+          <div class="evi" style="background:#fff5e8">
+            <div style="font-size:20px">⚠️</div>
+            <h6>依赖性问题</h6>
+            <p>过度依赖AI<br>影响长期发展</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="drawer" id="drawer">
+    <button class="close" onclick="closeDrawer()">✕</button>
+    <h3 id="drawerTitle">角色信息</h3>
+    <div class="small" id="drawerCamp">阵营：</div>
+    <div style="font-size:14px;line-height:1.8;margin:10px 0" id="drawerDesc"></div>
+    <div style="font-size:13px;font-weight:800;margin-bottom:6px">本位任务</div>
+    <ul class="bullets" id="drawerTasks" style="margin-top:0"></ul>
+    <button class="btn primary" style="width:100%;margin-top:8px" onclick="useSeat()">选择该座位</button>
+  </div>
+
+  <div class="hint" id="hint">点击座位即可查看角色任务</div>
+
+<script>
+  const roleTasks = {
+    "正方一辩": [
+      "提出立场定义，明确正方核心观点",
+      "概括论据方向，搭建论证框架",
+      "完成开篇立论，吸引听众注意"
+    ],
+    "正方二辩": [
+      "回应对方质疑，补强核心论据",
+      "针对反方立论进行重点拆解",
+      "推进本方论证节奏"
+    ],
+    "正方三辩": [
+      "在自由辩论中迅速反驳",
+      "抓住对方漏洞进行追问",
+      "补充新的案例和证据"
+    ],
+    "正方四辩": [
+      "总结本方优势论点",
+      "回收战场，突出价值判断",
+      "完成最终总结陈词"
+    ],
+    "反方一辩": [
+      "提出反方立场定义",
+      "反驳正方核心论点",
+      "建立反方整体框架"
+    ],
+    "反方二辩": [
+      "针对正方论据逐点回应",
+      "扩大反方风险论证",
+      "引导评审关注问题后果"
+    ],
+    "反方三辩": [
+      "在自由辩论中追击漏洞",
+      "迫使对方澄清概念",
+      "强化反方反驳力度"
+    ],
+    "反方四辩": [
+      "总结反方核心立场",
+      "回顾对方不足和逻辑问题",
+      "完成结辩陈词"
+    ]
+  };
+
+  const roleDesc = {
+    "正方一辩":"负责开篇立论，清晰阐述正方核心观点与分论点。",
+    "正方二辩":"负责回应质疑、补强论据，维持本方攻防节奏。",
+    "正方三辩":"负责自由攻防，灵活补充论据、追问与反驳。",
+    "正方四辩":"负责总结陈词，收束全场并强化立场。",
+    "反方一辩":"负责反驳正方立论，并阐述反方核心观点与分论点。",
+    "反方二辩":"负责扩展风险论证，稳固反方攻击线。",
+    "反方三辩":"负责自由辩论中的追击与拆解。",
+    "反方四辩":"负责总结反方优势并完成结辩。"
+  };
+
+  let selectedSeat = "正方一辩";
+  let selectedCamp = "正方";
+  let paused = false;
+  let remain = 155; // 2:35
+  const timerEl = document.getElementById('timer');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const hint = document.getElementById('hint');
+
+  function updateTaskPanel(role){
+    document.getElementById('taskRoleLabel').textContent = "当前：" + role;
+    const ul = document.getElementById('taskList');
+    ul.innerHTML = roleTasks[role].map(t => `<li>${t}</li>`).join('');
+  }
+
+  function openDrawer(role, camp){
+    document.getElementById('drawerTitle').textContent = role;
+    document.getElementById('drawerCamp').textContent = "阵营：" + camp;
+    document.getElementById('drawerDesc').textContent = roleDesc[role] || "该角色用于参与对应轮次的辩论。";
+    document.getElementById('drawerTasks').innerHTML = roleTasks[role].map(t => `<li>${t}</li>`).join('');
+    document.getElementById('drawer').classList.add('open');
+  }
+  function closeDrawer(){
+    document.getElementById('drawer').classList.remove('open');
+  }
+
+  document.querySelectorAll('.seat').forEach(seat => {
+    seat.addEventListener('click', () => {
+      const role = seat.dataset.role;
+      const camp = seat.dataset.camp;
+      selectedSeat = role;
+      selectedCamp = camp;
+      document.querySelectorAll('.seat').forEach(s => s.classList.remove('selected'));
+      seat.classList.add('selected');
+      openDrawer(role, camp);
+      hint.style.display = 'none';
+    });
+  });
+
+  function useSeat(){
+    updateTaskPanel(selectedSeat);
+    document.getElementById('currentCamp').textContent = selectedCamp;
+    document.getElementById('campPro').classList.toggle('active', selectedCamp === '正方');
+    document.getElementById('campCon').classList.toggle('active', selectedCamp === '反方');
+    closeDrawer();
+    alert('已选择座位：' + selectedSeat);
+  }
+
+  document.getElementById('campPro').onclick = () => {
+    selectedCamp = '正方';
+    document.getElementById('campPro').classList.add('active');
+    document.getElementById('campCon').classList.remove('active');
+    document.getElementById('currentCamp').textContent = '正方';
+  };
+  document.getElementById('campCon').onclick = () => {
+    selectedCamp = '反方';
+    document.getElementById('campCon').classList.add('active');
+    document.getElementById('campPro').classList.remove('active');
+    document.getElementById('currentCamp').textContent = '反方';
+  };
+
+  pauseBtn.onclick = () => {
+    paused = !paused;
+    pauseBtn.textContent = paused ? '继续计时' : '暂停计时';
+  };
+
+  setInterval(() => {
+    if (paused) return;
+    if (remain > 0){
+      remain--;
+      const m = String(Math.floor(remain / 60)).padStart(2, '0');
+      const s = String(remain % 60).padStart(2, '0');
+      timerEl.textContent = `${m}:${s}`;
+    }
+  }, 1000);
+
+  function fillPrompt(text){
+    const draft = document.getElementById('draft');
+    draft.value = text;
+    draft.focus();
+  }
+
+  function generateSuggestion(){
+    const draft = document.getElementById('draft');
+    const role = selectedSeat;
+    const suggestions = {
+      "正方一辩":"立论建议：首先界定“提升写作能力”不仅指速度提升，也包括素材积累、表达优化与结构组织能力提升。",
+      "正方二辩":"补强建议：可补充 AI 提供语言修改反馈、帮助学生反复修订作文 的角度。",
+      "正方三辩":"反驳建议：强调工具本身不必然导致依赖，关键在于使用方式与教师引导。",
+      "正方四辩":"总结建议：回到教育目标，指出 AI 应作为辅助手段而非替代者。",
+      "反方一辩":"立论建议：明确“写作能力”核心包括独立构思、情感表达与原创思维，这些恰恰容易被 AI 削弱。",
+      "反方二辩":"补强建议：从“语言优化≠能力提升”切入，强调真实能力需靠长期练习形成。",
+      "反方三辩":"追击建议：要求对方解释如何避免学生将 AI 生成内容直接当成个人成果。",
+      "反方四辩":"总结建议：强调效率提升不能替代长期的思维训练与语文素养积累。"
+    };
+    draft.value = (draft.value ? draft.value + "\n\n" : "") + suggestions[role];
+  }
+
+  function saveDraft(){
+    localStorage.setItem('debateDraft', document.getElementById('draft').value);
+    alert('草稿已保存到浏览器本地。');
+  }
+
+  function submitSpeech(){
+    const val = document.getElementById('draft').value.trim();
+    if(!val){
+      alert('请先输入你的发言内容。');
+      return;
+    }
+    alert('已提交发言（演示版）。');
+  }
+
+  const saved = localStorage.getItem('debateDraft');
+  if(saved) document.getElementById('draft').value = saved;
+  updateTaskPanel(selectedSeat);
+</script>
+</body>
+</html>

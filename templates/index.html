@@ -340,8 +340,9 @@
                 <div class="step-number">2</div>
                 <div class="step-content">
                     <div class="step-label">选择功能 / 活动类型</div>
-                    <select class="step-select" id="history-tool-select" disabled>
+                    <select class="step-select" id="history-tool-select">
                         <option value="">请选择功能</option>
+                        <option value="chinese-debate">AI语文辩论场</option>
                     </select>
                 </div>
             </div>
@@ -572,6 +573,12 @@
             { value: "geography-roleplay", text: "AI地理剧本杀" }
         ];
         
+        // 语文学科工具选项
+        const chineseTools = [
+            { value: "", text: "请选择功能" },
+            { value: "chinese-debate", text: "AI语文辩论场" }
+        ];
+        
         // 监听学科选择变化
         document.getElementById('subject-select').addEventListener('change', function() {
             const selectedSubject = this.value;
@@ -599,6 +606,17 @@
                     option.textContent = tool.text;
                     historyToolSelect.appendChild(option);
                 });
+            } else if (selectedSubject === '语文') {
+                // 启用语文工具选择
+                historyToolSelect.disabled = false;
+                // 清空并添加语文工具选项
+                historyToolSelect.innerHTML = '';
+                chineseTools.forEach(tool => {
+                    const option = document.createElement('option');
+                    option.value = tool.value;
+                    option.textContent = tool.text;
+                    historyToolSelect.appendChild(option);
+                });
             } else {
                 // 禁用并重置工具选择
                 historyToolSelect.disabled = true;
@@ -619,6 +637,8 @@
                 window.location.href = '/fake-history';
             } else if (selectedSubject === '地理' && selectedTool === 'geography-roleplay') {
                 window.location.href = '/geography_roleplay';
+            } else if (selectedSubject === '语文' && selectedTool === 'chinese-debate') {
+                window.location.href = '/debate_arena';
             } else {
                 // 显示功能正在开发中的提示框
                 alert('功能开发中');
