@@ -1674,15 +1674,589 @@
                 font-size: 24px;
             }
         }
+        
+        /* AI素养融合页面 */
+        .ai-literacy-page {
+            min-height: calc(100vh - 60px);
+            background-color: #f5f7fa;
+            padding: 20px;
+            display: none;
+        }
+        
+        .ai-literacy-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .ai-literacy-page .hero {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            min-height: 108px;
+        }
+        
+        .ai-literacy-page .hero h1 {
+            font-size: 42px;
+            font-weight: 900;
+            margin: 0 0 12px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .ai-literacy-page .hero p {
+            margin: 12px 0 0;
+            color: #475569;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .ai-literacy-page .hero-art {
+            width: 255px;
+            height: 120px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ai-literacy-page .book {
+            width: 185px;
+            height: 74px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #dbeafe, #fff);
+            box-shadow: 0 16px 28px rgba(37,99,235,.20);
+            transform: skewX(-10deg) rotate(-2deg);
+            position: absolute;
+            bottom: 8px;
+        }
+        
+        .ai-literacy-page .bot {
+            width: 58px;
+            height: 46px;
+            border-radius: 18px;
+            background: #0f172a;
+            box-shadow: 0 0 0 8px #bfdbfe;
+            position: absolute;
+            top: 26px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ai-literacy-page .bot:before,
+        .ai-literacy-page .bot:after {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #60a5fa;
+        }
+        
+        .ai-literacy-page .float {
+            position: absolute;
+            border-radius: 12px;
+            background: #dbeafe;
+            color: #2563eb;
+            font-weight: 900;
+            padding: 11px 13px;
+            box-shadow: var(--shadow);
+        }
+        
+        .ai-literacy-page .f1 {
+            left: 14px;
+            top: 10px;
+        }
+        
+        .ai-literacy-page .f2 {
+            right: 5px;
+            top: 28px;
+        }
+        
+        .ai-literacy-page .f3 {
+            right: 66px;
+            top: 0;
+        }
+        
+        .ai-literacy-page .section {
+            background: #fff;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .ai-literacy-page .section-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e293b;
+            margin: 0 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .ai-literacy-page .section-title .ico {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            background: #eef4ff;
+            color: var(--blue);
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+        }
+        
+        .ai-literacy-page .framework {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 24px;
+        }
+        
+        .ai-literacy-page table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        
+        .ai-literacy-page th,
+        .ai-literacy-page td {
+            border: 1px solid #e2e8f0;
+            padding: 12px 16px;
+            text-align: left;
+        }
+        
+        .ai-literacy-page th {
+            background: #f8fbff;
+            color: #1e293b;
+            font-weight: 800;
+            text-align: center;
+        }
+        
+        .ai-literacy-page .level {
+            width: 112px;
+            text-align: center;
+            font-weight: 800;
+            line-height: 1.4;
+        }
+        
+        .ai-literacy-page .level .big {
+            display: block;
+            font-size: 30px;
+            margin-bottom: 6px;
+        }
+        
+        .ai-literacy-page .a { color: var(--blue); background: #eff6ff; }
+        .ai-literacy-page .b { color: var(--green); background: #ecfdf5; }
+        .ai-literacy-page .c { color: var(--purple); background: #f5f3ff; }
+        .ai-literacy-page .d { color: var(--orange); background: #fff7ed; }
+        
+        .ai-literacy-page .code {
+            font-size: 18px;
+            font-weight: 900;
+            text-align: center;
+        }
+        
+        .ai-literacy-page .em {
+            color: var(--blue);
+            font-weight: 900;
+            background: #f8fbff;
+        }
+        
+        .ai-literacy-page .em .strong {
+            font-weight: 950;
+            color: #1d4ed8;
+        }
+        
+        .ai-literacy-page .core {
+            color: #ef4444;
+            font-weight: 900;
+        }
+        
+        .ai-literacy-page .advanced {
+            color: var(--blue);
+            font-weight: 900;
+        }
+        
+        .ai-literacy-page .note-line {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            color: #64748b;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .ai-literacy-page .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 7px;
+            background: var(--blue);
+        }
+        
+        .ai-literacy-page .dot.red {
+            background: #ef4444;
+        }
+        
+        .ai-literacy-page .dot.blue {
+            background: var(--blue);
+        }
+        
+        .ai-literacy-page .hollow {
+            background: #fff;
+            border: 2px solid #94a3b8;
+        }
+        
+        .ai-literacy-page .side {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .ai-literacy-page .radar-card,
+        .ai-literacy-page .focus-card {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: #fff;
+            padding: 16px;
+        }
+        
+        .ai-literacy-page .radar-card h3,
+        .ai-literacy-page .focus-card h3 {
+            margin: 0 0 12px;
+            font-size: 18px;
+        }
+        
+        .ai-literacy-page .radar-wrap {
+            height: 255px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ai-literacy-page .legend {
+            display: flex;
+            justify-content: center;
+            gap: 26px;
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        .ai-literacy-page .legend i {
+            display: inline-block;
+            width: 28px;
+            border-top: 3px solid var(--blue);
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        
+        .ai-literacy-page .legend i.dash {
+            border-top: 3px dashed #94a3b8;
+        }
+        
+        .ai-literacy-page .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 13px;
+        }
+        
+        .ai-literacy-page .chip {
+            padding: 9px 16px;
+            border-radius: 10px;
+            font-weight: 850;
+            font-size: 18px;
+        }
+        
+        .ai-literacy-page .chip.blue {
+            background: #eaf2ff;
+            color: #2563eb;
+        }
+        
+        .ai-literacy-page .chip.green {
+            background: #def7ec;
+            color: #059669;
+        }
+        
+        .ai-literacy-page .chip.purple {
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+        
+        .ai-literacy-page .chip.orange {
+            background: #ffedd5;
+            color: #ea580c;
+        }
+        
+        .ai-literacy-page .focus-card p {
+            margin: 0;
+            color: #475569;
+            line-height: 1.8;
+        }
+        
+        .ai-literacy-page .path {
+            display: grid;
+            grid-template-columns: 1fr 34px 1fr 34px 1fr 34px 1fr;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 10px 2px;
+        }
+        
+        .ai-literacy-page .stage {
+            border-radius: 16px;
+            border: 1px solid;
+            padding: 18px;
+            min-height: 116px;
+            background: #fff;
+            position: relative;
+        }
+        
+        .ai-literacy-page .stage h3 {
+            margin: 0 0 8px;
+            font-size: 20px;
+        }
+        
+        .ai-literacy-page .stage p {
+            margin: 0 0 10px;
+            color: #475569;
+        }
+        
+        .ai-literacy-page .num {
+            display: inline-grid;
+            place-items: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            color: #fff;
+            font-weight: 900;
+            margin-right: 8px;
+        }
+        
+        .ai-literacy-page .stage .rep {
+            font-weight: 800;
+        }
+        
+        .ai-literacy-page .arrow {
+            font-size: 44px;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        .ai-literacy-page .s1 { border-color: #bfdbfe; background: #f8fbff; }
+        .ai-literacy-page .s2 { border-color: #bbf7d0; background: #f8fffb; }
+        .ai-literacy-page .s3 { border-color: #ddd6fe; background: #fcfbff; }
+        .ai-literacy-page .s4 { border-color: #fed7aa; background: #fffaf5; }
+        
+        .ai-literacy-page .n1 { background: var(--blue); }
+        .ai-literacy-page .n2 { background: var(--green); }
+        .ai-literacy-page .n3 { background: var(--purple); }
+        .ai-literacy-page .n4 { background: var(--orange); }
+        
+        .ai-literacy-page .progress {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            margin: 8px 40px 0;
+            border-top: 2px dashed #d6e3f7;
+            color: #47556b;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .ai-literacy-page .progress span {
+            padding-top: 9px;
+            position: relative;
+        }
+        
+        .ai-literacy-page .progress span:before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--blue);
+        }
+        
+        .ai-literacy-page .progress span:nth-child(2):before { background: var(--green); }
+        .ai-literacy-page .progress span:nth-child(3):before { background: var(--purple); }
+        .ai-literacy-page .progress span:nth-child(4):before { background: var(--orange); }
+        
+        .ai-literacy-page .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        
+        .ai-literacy-page .activity {
+            border: 1px solid;
+            border-radius: 18px;
+            padding: 16px 14px 14px;
+            min-height: 305px;
+            background: #fff;
+        }
+        
+        .ai-literacy-page .act-head {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        
+        .ai-literacy-page .act-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 14px;
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-size: 29px;
+            flex: 0 0 auto;
+        }
+        
+        .ai-literacy-page .activity h3 {
+            margin: 0;
+            font-size: 22px;
+            line-height: 1.22;
+        }
+        
+        .ai-literacy-page .activity p {
+            font-size: 15px;
+            line-height: 1.55;
+            color: #334155;
+            margin: 12px 0;
+        }
+        
+        .ai-literacy-page .ability-box {
+            background: rgba(255, 255, 255, 0.74);
+            border-radius: 14px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+        
+        .ai-literacy-page .ability-box h4 {
+            font-size: 14px;
+            margin: 0 0 8px;
+            font-weight: 850;
+        }
+        
+        .ai-literacy-page .tag {
+            display: inline-block;
+            border-radius: 9px;
+            padding: 6px 13px;
+            font-size: 14px;
+            font-weight: 850;
+            margin: 0 6px 8px 0;
+        }
+        
+        .ai-literacy-page .learn {
+            font-size: 15px;
+            color: #0f172a;
+            margin-top: 12px;
+        }
+        
+        .ai-literacy-page .learn b {
+            font-weight: 900;
+        }
+        
+        .ai-literacy-page .bg-blue { background: var(--blue); }
+        .ai-literacy-page .bg-green { background: #10b981; }
+        .ai-literacy-page .bg-purple { background: #8b5cf6; }
+        .ai-literacy-page .bg-orange { background: #f97316; }
+        
+        .ai-literacy-page .tag-blue { background: #eaf2ff; color: #2563eb; }
+        .ai-literacy-page .tag-green { background: #dcfce7; color: #059669; }
+        .ai-literacy-page .tag-purple { background: #ede9fe; color: #6d28d9; }
+        .ai-literacy-page .tag-orange { background: #ffedd5; color: #ea580c; }
+        .ai-literacy-page .tag-red { background: #fef2f2; color: #ef4444; }
+        
+        .ai-literacy-page .goals {
+            display: grid;
+            grid-template-columns: 1fr 42px 1fr 42px 1fr 42px 1fr;
+            gap: 12px;
+            align-items: center;
+            padding: 4px 20px 2px;
+        }
+        
+        .ai-literacy-page .goal {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        
+        .ai-literacy-page .goal-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 15px;
+            display: grid;
+            place-items: center;
+            font-size: 32px;
+        }
+        
+        .ai-literacy-page .goal h3 {
+            margin: 0;
+            font-size: 19px;
+            line-height: 1.25;
+        }
+        
+        .ai-literacy-page .goal small {
+            color: #64748b;
+            font-weight: 700;
+        }
+        
+        .ai-literacy-page .foot {
+            text-align: center;
+            color: #64748b;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+        
+        @media (max-width: 980px) {
+            .ai-literacy-page .framework {
+                grid-template-columns: 1fr;
+            }
+            
+            .ai-literacy-page .cards {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .ai-literacy-page .path,
+            .ai-literacy-page .goals {
+                grid-template-columns: 1fr;
+            }
+            
+            .ai-literacy-page .arrow {
+                display: none;
+            }
+            
+            .ai-literacy-page .hero-art {
+                display: none;
+            }
+            
+            .ai-literacy-page .hero h1 {
+                font-size: 36px;
+            }
+        }
     </style>
     <script>
         // 标签页功能
         document.addEventListener('DOMContentLoaded', function() {
             const generateTab = document.getElementById('generate-tab');
             const aboutTab = document.getElementById('about-tab');
+            const aiLiteracyTab = document.getElementById('ai-literacy-tab');
             const mainContainer = document.querySelector('.main-container');
             const generatePage = document.getElementById('generate-page');
             const aboutPage = document.getElementById('about-page');
+            const aiLiteracyPage = document.getElementById('ai-literacy-page');
             const navLinks = document.querySelectorAll('.nav-link');
             
             generateTab.addEventListener('click', (e) => {
@@ -1691,6 +2265,7 @@
                 // 显示生成活动页面，隐藏其他内容
                 mainContainer.style.display = 'none';
                 aboutPage.style.display = 'none';
+                aiLiteracyPage.style.display = 'none';
                 generatePage.style.display = 'block';
                 
                 // 更新导航链接的活动状态
@@ -1706,6 +2281,7 @@
                 // 显示关于我们页面，隐藏其他内容
                 mainContainer.style.display = 'none';
                 generatePage.style.display = 'none';
+                aiLiteracyPage.style.display = 'none';
                 aboutPage.style.display = 'block';
                 
                 // 更新导航链接的活动状态
@@ -1715,9 +2291,25 @@
                 aboutTab.classList.add('active');
             });
             
+            aiLiteracyTab.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // 显示AI素养融合页面，隐藏其他内容
+                mainContainer.style.display = 'none';
+                generatePage.style.display = 'none';
+                aboutPage.style.display = 'none';
+                aiLiteracyPage.style.display = 'block';
+                
+                // 更新导航链接的活动状态
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+                aiLiteracyTab.classList.add('active');
+            });
+            
             // 其他导航链接点击时显示主容器
             navLinks.forEach(link => {
-                if (link.id !== 'about-tab' && link.id !== 'generate-tab') {
+                if (link.id !== 'about-tab' && link.id !== 'generate-tab' && link.id !== 'ai-literacy-tab') {
                     link.addEventListener('click', (e) => {
                         // 只有当点击的是素材库链接时才阻止默认行为
                         if (link.textContent.trim() === '素材库') {
@@ -1725,6 +2317,7 @@
                             mainContainer.style.display = 'flex';
                             aboutPage.style.display = 'none';
                             generatePage.style.display = 'none';
+                            aiLiteracyPage.style.display = 'none';
                             
                             // 更新导航链接的活动状态
                             navLinks.forEach(l => {
@@ -1748,8 +2341,9 @@
             </div>
             <div class="nav-links">
                 <a href="/" class="nav-link">首页</a>
+                <a href="#" class="nav-link active" id="ai-literacy-tab">AI素养融合</a>
                 <a href="#" class="nav-link" id="generate-tab">生成活动</a>
-                <a href="/time-travel" class="nav-link active">素材库</a>
+                <a href="/time-travel" class="nav-link">素材库</a>
                 <a href="#" class="nav-link" id="about-tab">关于我们</a>
                 <a href="#" class="nav-link">我的资源</a>
             </div>
@@ -1767,7 +2361,7 @@
     </nav>
     
     <!-- 主容器 -->
-    <div class="main-container">
+    <div class="main-container" style="display: none;">
         <!-- 左侧边栏 -->
         <div class="sidebar">
             <div class="sidebar-section">
@@ -3041,5 +3635,123 @@
             }
         });
     </script>
+    
+    <!-- AI素养融合页面 -->
+    <div class="ai-literacy-page" id="ai-literacy-page" style="display: block;">
+        <div class="ai-literacy-container">
+            <style>
+                :root {
+                  --bg: #f5f8fc;
+                  --card: #ffffff;
+                  --line: #e7edf6;
+                  --text: #1f2a44;
+                  --sub: #7c8aa5;
+                  --blue: #2f6df6;
+                  --blue-soft: #eef4ff;
+                  --green: #10b981;
+                  --green-soft: #dcfce7;
+                  --purple: #8b5cf6;
+                  --purple-soft: #f3e8ff;
+                  --orange: #f97316;
+                  --orange-soft: #ffedd5;
+                }
+            </style>
+            <section class="hero">
+                <div>
+                    <h1>AI素养框架 × <span>教学活动设计</span></h1>
+                    <p>以AI素养框架为基础，设计多样化教学活动，培养学生理解AI、判断AI、使用AI的能力</p>
+                </div>
+                <div class="hero-art" aria-hidden="true"><div class="float f1">▥</div><div class="float f2">•••</div><div class="float f3">▮▮▮</div><div class="book"></div><div class="bot"></div></div>
+            </section>
+            
+            <section class="section">
+                <h2 class="section-title"><span class="ico">◇</span>一、AI素养能力框架（乡村初中版）</h2>
+                <div class="framework">
+                    <div>
+                        <table>
+                            <thead><tr><th>层级</th><th>维度编码</th><th>维度名称</th><th>能力项</th><th>说明</th></tr></thead>
+                            <tbody>
+                                <tr><td class="level a" rowspan="2"><span class="big">🧠</span>基础认知</td><td class="code a">A1</td><td class="advanced">数据驱动工具</td><td class="advanced">理解AI依赖数据</td><td class="advanced">AI输出由数据决定</td></tr>
+                                <tr><td class="code a">A2</td><td class="core">AI局限性</td><td class="core">识别错误与幻觉</td><td class="core">AI可能出错或不完整</td></tr>
+                                <tr><td class="level b" rowspan="3"><span class="big">🛡️</span>安全与伦理</td><td class="code b">B1</td><td>数据隐私意识</td><td>保护数据隐私</td><td>注意个人信息风险</td></tr>
+                                <tr><td class="code b">B2</td><td>算法意识</td><td>理解推荐机制</td><td>认识算法如何影响结果</td></tr>
+                                <tr><td class="code b">B3</td><td class="core">学术规范</td><td class="core">规范使用AI</td><td class="core">诚信使用，注明来源</td></tr>
+                                <tr><td class="level c" rowspan="3"><span class="big">🖥️</span>功能使用</td><td class="code c">C1</td><td>学习支持</td><td>用AI辅助学习</td><td>提升学习效率</td></tr>
+                                <tr><td class="code c">C2</td><td class="core">信息验证</td><td class="core">验证AI输出</td><td class="core">交叉验证，辨别真伪</td></tr>
+                                <tr><td class="code c">C3</td><td class="advanced">提问与表达能力</td><td class="advanced">清晰提问与表达</td><td class="advanced">有效表达观点与问题</td></tr>
+                                <tr><td class="level d" rowspan="3"><span class="big">🌐</span>现实理解<br>与发展</td><td class="code d">D1</td><td>AI与职业意识</td><td>认识职业影响</td><td>了解AI与职业关系</td></tr>
+                                <tr><td class="code d">D2</td><td>AI与乡村发展</td><td>理解社会应用</td><td>AI助力乡村与社会发展</td></tr>
+                                <tr><td class="code d">D3</td><td>科技公平意识</td><td>关注公平与包容</td><td>理解技术公平与差距</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="note-line"><span><i class="dot red"></i>本项目核心能力</span><span><i class="dot blue"></i>本项目进阶能力</span></div>
+                    </div>
+                    
+                    <aside class="side">
+                        <article class="activity act3"><div class="act-head"><div class="act-icon bg-purple">▣</div><h3 style="color:var(--purple)">AI出题与质检 ·<br>题目质量分析</h3></div><p>对AI生成试题进行分析与判断，识别问题并提出改进建议，培养评价与规范意识。</p><div class="ability-box"><h4 style="color:#ef4444">核心能力</h4><span class="tag tag-red">C2</span><span class="tag tag-red">B3</span><span class="tag tag-red">A2</span><h4 style="color:var(--blue)">进阶能力</h4><span class="tag tag-blue">C3</span><span class="tag tag-blue">A1</span></div><div class="learn">核心学习点：<b>判断AI“出题是否合格”</b></div></article>
+                        <div class="radar-card">
+                            <h3>本项目能力覆盖情况</h3>
+                            <div class="radar-wrap">
+                                <svg viewBox="0 0 280 250" width="280" height="250" role="img" aria-label="能力覆盖雷达图">
+                                    <g transform="translate(140,118)">
+                                        <!-- 4个维度的网格 -->
+                                        <polygon points="0,-82 82,0 0,82 -82,0" fill="none" stroke="#e5eefb" stroke-width="2"/>
+                                        <polygon points="0,-62 62,0 0,62 -62,0" fill="none" stroke="#e5eefb"/>
+                                        <polygon points="0,-42 42,0 0,42 -42,0" fill="none" stroke="#e5eefb"/>
+                                        <polygon points="0,-22 22,0 0,22 -22,0" fill="none" stroke="#e5eefb"/>
+                                        <!-- 4个维度的轴线 -->
+                                        <line x1="0" y1="0" x2="0" y2="-82" stroke="#e5eefb"/>
+                                        <line x1="0" y1="0" x2="82" y2="0" stroke="#e5eefb"/>
+                                        <line x1="0" y1="0" x2="0" y2="82" stroke="#e5eefb"/>
+                                        <line x1="0" y1="0" x2="-82" y2="0" stroke="#e5eefb"/>
+                                        <!-- 完整框架（虚线） -->
+                                        <polygon points="0,-76 76,0 0,76 -76,0" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 6" opacity=".75"/>
+                                        <!-- 本项目重点（实线）：C最长，其次A，B和D最短 -->
+                                        <polygon points="0,-65 82,0 0,40 -30,0" fill="#3b82f6" opacity=".14" stroke="#2563eb" stroke-width="4"/>
+                                        <!-- 数据点 -->
+                                        <circle cx="0" cy="-65" r="6" fill="#2563eb"/>
+                                        <circle cx="82" cy="0" r="6" fill="#2563eb"/>
+                                        <circle cx="0" cy="40" r="6" fill="#2563eb"/>
+                                        <circle cx="-30" cy="0" r="6" fill="#2563eb"/>
+                                        <!-- 维度标签 -->
+                                        <text x="0" y="-104" text-anchor="middle" font-size="14" font-weight="800" fill="#334155">基础认知（A）</text>
+                                        <text x="104" y="20" text-anchor="middle" font-size="14" font-weight="800" fill="#334155">功能使用（C）</text>
+                                        <text x="0" y="104" text-anchor="middle" font-size="14" font-weight="800" fill="#334155">安全与伦理（B）</text>
+                                        <text x="-104" y="20" text-anchor="middle" font-size="14" font-weight="800" fill="#334155">现实理解与发展（D）</text>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="legend"><span><i></i>本项目重点</span><span><i class="dash"></i>完整框架</span></div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h2 class="section-title"><span class="ico">⛰</span>二、AI素养学习进阶路径 <small style="color:#64748b">（四大能力进阶）</small></h2>
+                <div class="path">
+                    <div class="stage s1"><h3><span class="num n1">1</span>理解AI</h3><p>理解AI如何处理信息</p><div class="rep" style="color:var(--blue)">代表能力：A1</div></div><div class="arrow">→</div>
+                    <div class="stage s2"><h3><span class="num n2">2</span>识别问题</h3><p>识别AI的错误与局限</p><div class="rep" style="color:var(--green)">代表能力：A2 + C2</div></div><div class="arrow">→</div>
+                    <div class="stage s3"><h3><span class="num n3">3</span>评价质量</h3><p>评价AI输出的质量</p><div class="rep" style="color:var(--purple)">代表能力：C2 + B3</div></div><div class="arrow">→</div>
+                    <div class="stage s4"><h3><span class="num n4">4</span>参与决策</h3><p>在社会情境中使用与判断AI</p><div class="rep" style="color:var(--orange)">代表能力：D2 + D3</div></div>
+                </div>
+                <div class="progress"><span>认知</span><span>判断</span><span>评价</span><span>应用</span></div>
+            </section>
+            
+            <section class="section">
+                <h2 class="section-title"><span class="ico">◎</span>三、我们的目标</h2>
+                <div class="goals">
+                    <div class="goal"><div class="goal-icon" style="background:#eef4ff;color:var(--blue)">🎯</div><h3>培养核心素养<small>（面向所有学生）</small></h3></div>
+                    <div class="arrow">→</div>
+                    <div class="goal"><div class="goal-icon" style="background:#dcfce7;color:var(--green)">📈</div><h3>提升思维能力<small>（批判性思维）</small></h3></div>
+                    <div class="arrow">→</div>
+                    <div class="goal"><div class="goal-icon" style="background:#f3e8ff;color:var(--purple)">🔍</div><h3>学会验证信息<small>（交叉验证）</small></h3></div>
+                    <div class="arrow">→</div>
+                    <div class="goal"><div class="goal-icon" style="background:#ffedd5;color:var(--orange)">🌱</div><h3>助力终身学习<small>（自主学习）</small></h3></div>
+                </div>
+                <div class="foot">从"被动接收"到"主动验证"，从"工具使用"到"思维培养"</div>
+            </section>
+        </div>
+    </div>
 </body>
 </html>
