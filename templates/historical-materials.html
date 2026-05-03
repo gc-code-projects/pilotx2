@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>素材库 - AI备课助手</title>
+    <!-- PDF.js 库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -2307,46 +2309,45 @@
                             <div class="muted">支持 TXT / PDF / 图片格式</div>
                         </div>
                         <div class="file-box">
-                            <div class="file-main">
-                                <div class="file-icon">📘</div>
+                            <div class="file-main" id="file-main">
+                                <div class="file-icon" id="file-icon">📁</div>
                                 <div>
-                                    <div style="font-weight:800">1884年《中法会议简明条款》节选.txt</div>
-                                    <div class="muted">TXT · 2.3 KB</div>
+                                    <div style="font-weight:800" id="file-name">请上传文件</div>
+                                    <div class="muted" id="file-info">点击下方按钮上传</div>
                                 </div>
                             </div>
-                            <div style="color:var(--blue);font-size:22px">◉</div>
                         </div>
-                        <div class="excerpt">
-                            一、清国国家应允将下开地方之关税自主权：广东、福建、浙江、江苏……<br><br>
-                            二、清国应允法国在下开各口地方设立领事馆：北京、上海、天津、汉口……<br><br>
-                            三、清国应允将下开各府地方，准法国人居住及贸易：苏州、杭州、沙市……<br><br>
-                            ……
+                        <div class="excerpt" id="excerpt">
                         </div>
-                        <div style="text-align:center"><button class="outline-center">重新上传</button></div>
+                        <div style="text-align:center">
+                            <input type="file" id="file-input" accept=".txt,.pdf,.jpg,.jpeg,.png,.gif" style="display:none">
+                            <button class="outline-center" id="upload-button">上传</button>
+                            <button class="outline-center" id="analyze-button" style="margin-left:10px;">AI分析</button>
+                        </div>
                     </div>
 
                     <div class="card">
                         <div class="card-title">
                             <div class="left"><span class="title-icon green">✅</span><span>AI分析结果</span></div>
-                            <div class="small-tag">✓ AI已完成分析</div>
+                            <div class="small-tag" id="ai-analysis-complete" style="display:none">✓ AI已完成分析</div>
                         </div>
-                        <div class="kv"><div class="k">时间</div><div class="v">1884年</div></div>
-                        <div class="kv"><div class="k">人物/国家</div><div class="v">清政府、法国</div></div>
-                        <div class="kv"><div class="k">核心主张</div><div class="v">法国要求获得关税自主权，并在多个通商口岸设立领事馆，扩大在华居住与贸易权限。</div></div>
-                        <div class="kv"><div class="k">背景信息</div><div class="v">中法战争后，清政府被迫追签一系列不平等条约，法国借此扩大在华权益。</div></div>
-                        <div class="kv"><div class="k">关键词</div><div class="v"><div class="chip-row"><span class="chip">关税自主权</span><span class="chip">领事馆设立</span><span class="chip">通商口岸</span><span class="chip">不平等条约</span></div></div></div>
+                        <div class="kv"><div class="k">时间</div><div class="v" id="ai-result-time"></div></div>
+                        <div class="kv"><div class="k">人物/国家</div><div class="v" id="ai-result-characters"></div></div>
+                        <div class="kv"><div class="k">核心主张</div><div class="v" id="ai-result-main"></div></div>
+                        <div class="kv"><div class="k">背景信息</div><div class="v" id="ai-result-background"></div></div>
+                        <div class="kv"><div class="k">关键词</div><div class="v" id="ai-result-keywords"></div></div>
                     </div>
 
                     <div class="card">
                         <div class="card-title">
                             <div class="left"><span class="title-icon orange">📝</span><span>我的分析</span><span style="color:var(--orange);font-size:16px">（学生填写）</span></div>
-                            <button class="tiny-btn">清空</button>
+                            <button class="tiny-btn" id="clear-my-analysis">清空</button>
                         </div>
-                        <div class="form-grid">
-                            <input placeholder="如：19世纪末" value="19世纪末" />
-                            <input placeholder="如：清政府、法国" value="清政府、法国" />
-                            <textarea placeholder="请用自己的话概括史料的主要内容…"></textarea>
-                            <textarea placeholder="从史料中找出支持你观点的句子或关键词…"></textarea>
+                        <div class="form-grid" id="my-analysis-form">
+                            <input placeholder="如：19世纪末" id="my-time" />
+                            <input placeholder="如：清政府、法国" id="my-entities" />
+                            <textarea placeholder="请用自己的话概括史料的主要内容…" id="my-main"></textarea>
+                            <textarea placeholder="从史料中找出支持你观点的句子或关键词…" id="my-evidence"></textarea>
                         </div>
                         <div class="note-row">💡 请完成填写后进行对比分析</div>
                     </div>
@@ -2358,32 +2359,34 @@
                         <div class="soft-box blue">
                             <h4 style="color:var(--blue)">AI多了什么？</h4>
                             <div class="sub">AI提取到但我未想到的关键信息</div>
-                            <div class="soft-placeholder">系统将自动生成对比结果…</div>
+                            <div class="soft-placeholder" id="compare-ai-more">系统将自动生成对比结果…</div>
                         </div>
                         <div class="soft-box orange">
                             <h4 style="color:var(--orange)">AI漏了什么？</h4>
                             <div class="sub">我提到但AI未提取的关键信息</div>
-                            <div class="soft-placeholder">系统将自动生成对比结果…</div>
+                            <div class="soft-placeholder" id="compare-ai-missed">系统将自动生成对比结果…</div>
                         </div>
                         <div class="soft-box purple">
                             <h4 style="color:var(--purple)">哪个更准确？为什么？</h4>
                             <div class="sub">判断AI或我的分析更准确，并说明理由</div>
-                            <div class="soft-placeholder">请填写你的判断和理由…</div>
+                            <div class="soft-placeholder" id="compare-accuracy">请填写你的判断和理由…</div>
                         </div>
                         <div class="soft-box green">
                             <h4 style="color:#169860">我的结论</h4>
                             <div class="sub">基于对比，我对AI分析的评价是…</div>
-                            <select>
+                            <select id="compare-verdict-select">
                                 <option>请选择评价</option>
                                 <option>可作为速读参考，但需修正</option>
                                 <option>基本准确，可辅助理解</option>
                                 <option>存在明显偏差，不能直接采用</option>
                             </select>
                             <div style="height:10px"></div>
-                            <textarea placeholder="请说明你的理由…" style="min-height:84px"></textarea>
+                            <textarea placeholder="请说明你的理由…" id="compare-verdict-reason" style="min-height:84px"></textarea>
+                            <div style="height:10px"></div>
+                            <button class="report-btn" id="submit-feedback-btn">提交反馈</button>
                         </div>
                     </div>
-                    <button class="report-btn">📄 生成对比报告</button>
+                    <button class="report-btn" id="generate-report-btn">📄 生成对比报告</button>
                 </section>
 
                 <div class="tips">💡 小贴士：对比的过程比答案更重要，学会质疑、验证和判断，才是历史学习的核心能力。</div>
@@ -2601,7 +2604,647 @@
             aboutPage.style.display = 'none';
             generatePage.style.display = 'none';
             aiLiteracyPage.style.display = 'block';
+            
+            // 初始化文件上传功能
+            initFileUpload();
+            
+            // 清空按钮点击事件
+            const clearMyAnalysisBtn = document.getElementById('clear-my-analysis');
+            if (clearMyAnalysisBtn) {
+                clearMyAnalysisBtn.addEventListener('click', () => {
+                    document.getElementById('my-time').value = '';
+                    document.getElementById('my-entities').value = '';
+                    document.getElementById('my-main').value = '';
+                    document.getElementById('my-evidence').value = '';
+                });
+            }
+            
+            // 提交反馈按钮点击事件
+            const submitFeedbackBtn = document.getElementById('submit-feedback-btn');
+            if (submitFeedbackBtn) {
+                submitFeedbackBtn.addEventListener('click', () => {
+                    alert('你的反馈已提交，谢谢！');
+                });
+            }
+            
+            // 生成对比报告按钮点击事件
+            const generateReportBtn = document.getElementById('generate-report-btn');
+            if (generateReportBtn) {
+                generateReportBtn.addEventListener('click', () => {
+                    if (!currentUploadedFile) {
+                        alert('请先上传文件');
+                        return;
+                    }
+                    
+                    // 获取 AI 分析结果
+                    const aiTime = document.getElementById('ai-result-time').textContent || '';
+                    const aiEntities = document.getElementById('ai-result-characters').textContent || '';
+                    const aiMain = document.getElementById('ai-result-main').textContent || '';
+                    const aiBackground = document.getElementById('ai-result-background').textContent || '';
+                    const aiKeywords = document.getElementById('ai-result-keywords').textContent || '';
+                    
+                    const aiInitialAnalysis = `时间: ${aiTime}\n人物/国家: ${aiEntities}\n核心主张: ${aiMain}\n背景信息: ${aiBackground}\n关键词: ${aiKeywords}`;
+                    
+                    // 获取学生分析结果
+                    const studentTime = document.getElementById('my-time').value || '';
+                    const studentEntities = document.getElementById('my-entities').value || '';
+                    const studentMain = document.getElementById('my-main').value || '';
+                    const studentEvidence = document.getElementById('my-evidence').value || '';
+                    
+                    const studentAnalysis = `时间: ${studentTime}\n人物/国家: ${studentEntities}\n核心主张: ${studentMain}\n证据依据: ${studentEvidence}`;
+                    
+                    // 构建 prompt（不包含 source_material，因为文件将通过 FormData 发送）
+                    const prompt = `# Role: 历史证据意识引导员 (Evidence-Based Mentor)
+
+# Core Philosophy:
+你不是一个绝对权威的判官，而是一个引导学生进行批判性思考的数字伙伴。你要鼓励学生在史料中寻找证据，甚至鼓励他们挑战 AI 的分析结果。
+
+# Input Context:
+1. 【原始史料】：见上传的文件
+2. 【AI分析结果】：${aiInitialAnalysis} (这是你之前生成的初步结论)
+3. 【我的分析】：${studentAnalysis} (包含学生提取的时间、人物、主张及证据)
+
+# Task:
+执行"AI与个人总结对比"任务。对比两者的异同，生成结构化报告，驱动 UI 展示。
+
+# Execution Logic & Constraints:
+
+## 1. 逻辑陷阱处理（AI 漏了什么）:
+- **严格指令**：禁止为了维护 AI 权威而强行辩解！
+- **操作**：仔细检索【我的分析】中的"证据依据"。如果学生提取了史料中的细节（如具体的条约条款、地理位置、特定词汇）而 AI 在初始分析中忽略了，**必须在 \`ai_missed\` 字段中诚实承认并大力表扬学生**。
+- **话术示例**： "你太敏锐了！我只关注了大框架，而你捕捉到了'苏州、杭州'这些具体的通商口岸，这对于理解列强势力深入内地至关重要。"
+
+## 2. 防止复读逻辑:
+- 如果学生的分析与 AI 的分析在【核心主张】上高度一致且正确：
+- **话术示例**： "英雄所见略同！我们都抓住了这份史料的核心要义。这说明你已经具备了专业历史分析师的眼光，能够精准穿透文字表象。"
+
+## 3. 维度映射说明:
+- **ai_more (对应蓝色框)**：AI 提取到了但学生未提到的深度信息（如背景关联）。
+- **ai_missed (对应橙色框)**：学生提取到了但 AI 忽略的细节证据。
+- **accuracy_comparison (对应紫色框)**：综合判断，解释为什么某种视角更准确，或两者如何互补。
+
+# Output Format (JSON):
+{
+    "ai_more": "AI 关注到了材料之外的背景关联...（此处文字对应左下蓝色框）",
+    "ai_missed": "你发现了一个我忽略的关键细节！...（此处文字对应中下橙色框）",
+    "accuracy_comparison": "关于'哪个更准确'的深度分析：你的分析在'细节捕捉'上胜出，而我的分析在'宏观背景'上更全。建议结合两者的视角...（此处文字对应中右紫色框）"
+}`;
+                    
+                    // 显示加载状态
+                    const compareAiMore = document.getElementById('compare-ai-more');
+                    const compareAiMissed = document.getElementById('compare-ai-missed');
+                    const compareAccuracy = document.getElementById('compare-accuracy');
+                    
+                    compareAiMore.textContent = '生成中...';
+                    compareAiMissed.textContent = '生成中...';
+                    compareAccuracy.textContent = '生成中...';
+                    
+                    // 检查文件类型
+                    const fileExtension = currentUploadedFile.name.split('.').pop().toLowerCase();
+                    
+                    // 根据文件类型选择处理方式
+                    if (currentUploadedFile.type === 'application/pdf' || fileExtension === 'pdf') {
+                        // PDF文件：使用 /analyze 端点
+                        const formData = new FormData();
+                        formData.append('file', currentUploadedFile);
+                        formData.append('task', prompt);
+                        
+                        fetch('/analyze', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => processCompareResult(data, compareAiMore, compareAiMissed, compareAccuracy))
+                        .catch(error => handleCompareError(error, compareAiMore, compareAiMissed, compareAccuracy));
+                        
+                    } else if (currentUploadedFile.type.startsWith('text/') || fileExtension === 'txt') {
+                        // TXT文件：读取内容，插入到prompt中，使用 /chat 端点
+                        const reader = new FileReader();
+                        reader.readAsText(currentUploadedFile);
+                        reader.onload = (event) => {
+                            const textContent = event.target.result;
+                            const promptWithContent = prompt.replace('见上传的文件', textContent);
+                            
+                            fetch('/chat', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ message: promptWithContent })
+                            })
+                            .then(response => response.json())
+                            .then(data => processCompareResult(data, compareAiMore, compareAiMissed, compareAccuracy, 'chat'))
+                            .catch(error => handleCompareError(error, compareAiMore, compareAiMissed, compareAccuracy));
+                        };
+                        
+                    } else if (currentUploadedFile.type.startsWith('image/')) {
+                        // 图片文件：读取为data URL，使用 /analyze-image 端点
+                        const reader = new FileReader();
+                        reader.readAsDataURL(currentUploadedFile);
+                        reader.onload = (event) => {
+                            const imageUrl = event.target.result;
+                            
+                            fetch('/analyze-image', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ 
+                                    image_url: imageUrl,
+                                    prompt: prompt
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => processCompareResult(data, compareAiMore, compareAiMissed, compareAccuracy, 'chat'))
+                            .catch(error => handleCompareError(error, compareAiMore, compareAiMissed, compareAccuracy));
+                        };
+                    }
+                });
+            }
+            
+            // 处理对比结果
+            function processCompareResult(data, aiMoreEl, aiMissedEl, accuracyEl, sourceType = 'analyze') {
+                console.log('Received data:', data);
+                const resultField = sourceType === 'analyze' ? 'ai_analysis' : 'response';
+                
+                if (data[resultField]) {
+                    try {
+                        const jsonMatch = data[resultField].match(/\{[\s\S]*?\}/);
+                        console.log(jsonMatch);
+                        if (jsonMatch) {
+                            const result = JSON.parse(jsonMatch[0]);
+                            if (result.ai_more !== undefined) {
+                                aiMoreEl.textContent = result.ai_more || '';
+                                aiMissedEl.textContent = result.ai_missed || '';
+                                accuracyEl.textContent = result.accuracy_comparison || '';
+                            } else {
+                                aiMoreEl.textContent = '格式错误';
+                                aiMissedEl.textContent = '格式错误';
+                                accuracyEl.textContent = '格式错误';
+                            }
+                        } else {
+                            aiMoreEl.textContent = '生成失败，请重试';
+                            aiMissedEl.textContent = '生成失败，请重试';
+                            accuracyEl.textContent = '生成失败，请重试';
+                        }
+                    } catch (e) {
+                        console.error('解析JSON失败:', e);
+                        aiMoreEl.textContent = '解析失败';
+                        aiMissedEl.textContent = '解析失败';
+                        accuracyEl.textContent = '解析失败';
+                    }
+                } else {
+                    aiMoreEl.textContent = '生成失败';
+                    aiMissedEl.textContent = '生成失败';
+                    accuracyEl.textContent = '生成失败';
+                }
+            }
+            
+            // 处理错误
+            function handleCompareError(error, aiMoreEl, aiMissedEl, accuracyEl) {
+                console.error('生成对比报告失败:', error);
+                aiMoreEl.textContent = '请求失败';
+                aiMissedEl.textContent = '请求失败';
+                accuracyEl.textContent = '请求失败';
+            }
         });
+        
+        // 全局变量，存储当前上传的文件
+        let currentUploadedFile = null;
+        
+        // 文件上传功能
+        function initFileUpload() {
+            const uploadButton = document.getElementById('upload-button');
+            const fileInput = document.getElementById('file-input');
+            const fileName = document.getElementById('file-name');
+            const fileInfo = document.getElementById('file-info');
+            const fileIcon = document.getElementById('file-icon');
+            const excerpt = document.getElementById('excerpt');
+            
+            // 点击上传按钮触发文件选择
+            uploadButton.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            // 处理文件选择
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                // 保存文件到全局变量
+                currentUploadedFile = file;
+                
+                // 更新文件信息
+                fileName.textContent = file.name;
+                const fileSize = (file.size / 1024).toFixed(1) + ' KB';
+                fileInfo.textContent = file.type.split('/')[1].toUpperCase() + ' · ' + fileSize;
+                
+                // 更新图标
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                if (fileExtension === 'pdf') {
+                    fileIcon.textContent = '📕';
+                } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                    fileIcon.textContent = '🖼️';
+                } else if (fileExtension === 'txt') {
+                    fileIcon.textContent = '📘';
+                } else {
+                    fileIcon.textContent = '📄';
+                }
+                
+                // 更新按钮文字
+                uploadButton.textContent = '重新上传';
+                
+                // 读取文件内容并显示
+                const reader = new FileReader();
+                
+                if (file.type.startsWith('text/') || fileExtension === 'txt') {
+                    reader.onload = (event) => {
+                        excerpt.textContent = event.target.result.substring(0, 1000);
+                        if (event.target.result.length > 1000) {
+                            excerpt.textContent += '...';
+                        }
+                    };
+                    reader.readAsText(file);
+                } else if (file.type.startsWith('application/pdf')) {
+                    reader.onload = (event) => {
+                        // 使用 PDF.js 渲染 PDF
+                        renderPDF(event.target.result, excerpt);
+                    };
+                    reader.readAsArrayBuffer(file);
+                } else if (file.type.startsWith('image/')) {
+                    reader.onload = (event) => {
+                        excerpt.innerHTML = '<img src="' + event.target.result + '" style="max-width:100%;height:auto;border-radius:8px;">';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    excerpt.textContent = '不支持的文件格式';
+                }
+            });
+            
+            // AI分析按钮点击事件
+            const analyzeButton = document.getElementById('analyze-button');
+            analyzeButton.addEventListener('click', () => {
+                const file = fileInput.files[0];
+                if (!file) {
+                    alert('请先上传文件');
+                    return;
+                }
+                analyzeFile(file);
+            });
+        }
+        
+        // AI分析功能
+        function analyzeFile(file) {
+            console.log('analyzeFile called with:', file.name);
+            
+            const aiResultTime = document.getElementById('ai-result-time');
+            const aiResultCharacters = document.getElementById('ai-result-characters');
+            const aiResultMain = document.getElementById('ai-result-main');
+            const aiResultBackground = document.getElementById('ai-result-background');
+            const aiResultKeywords = document.getElementById('ai-result-keywords');
+            const aiAnalysisComplete = document.getElementById('ai-analysis-complete');
+            
+            // 隐藏完成标签
+            if (aiAnalysisComplete) {
+                aiAnalysisComplete.style.display = 'none';
+            }
+            
+            // 显示加载状态
+            aiResultTime.textContent = '分析中...';
+            aiResultCharacters.textContent = '分析中...';
+            aiResultMain.textContent = '分析中...';
+            aiResultBackground.textContent = '分析中...';
+            aiResultKeywords.textContent = '分析中...';
+            
+            // 检查文件类型
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            
+            // 构建 prompt
+            const promptTemplate = `这个 Prompt 的重点是 结构化提取 ，既要准确，又要简洁，方便学生后续做对比。 
+# Role: 初中历史教研组长（速读分析官）
+  
+# Task:
+对输入的【原始史料】进行快速分析，提取核心信息，为初中生提供一个阅读基准。
+  
+# Constraints:
+1. **语言风格**：简明扼要，适合初中生阅读。
+2. **准确度要求**：必须严谨，不得捏造史料中未提及的信息。
+3. **关键维度**：按时间、人物/国家、核心主张、背景信息、关键词五个维度提取。
+  
+# Input Material:
+[PAPER_CONTENT]
+  
+# Output Format (JSON):
+{ 
+  "time": "例如：1884年 / 清末",
+  "entities": "例如：清政府、法国",
+  "main_idea": "用一句话概括史料的核心内容...",
+  "background": "简述该史料相关的历史背景（如：中法战争后）...",
+  "keywords": ["关键词1", "关键词2", "关键词3"]
+}`;
+            
+            // 处理 PDF 文件，使用 FormData 发送到后端
+            if (file.type === 'application/pdf' || fileExtension === 'pdf') {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('task', promptTemplate);
+                
+                console.log('Sending PDF to /analyze');
+                
+                fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Received data:', data);
+                    if (data.ai_analysis) {
+                        // 尝试从 ai_analysis 中提取 JSON 数据
+                        try {
+                            const jsonMatch = data.ai_analysis.match(/\{[\s\S]*?\}/);
+                            if (jsonMatch) {
+                                const result = JSON.parse(jsonMatch[0]);
+                                aiResultTime.textContent = result.time || '未识别到时间';
+                                aiResultCharacters.textContent = result.entities || '未识别到人物/国家';
+                                aiResultMain.textContent = result.main_idea || '未识别到核心主张';
+                                aiResultBackground.textContent = result.background || '未识别到背景信息';
+                                if (result.keywords && Array.isArray(result.keywords)) {
+                                    aiResultKeywords.innerHTML = '<div class="chip-row">' + 
+                                        result.keywords.map(k => '<span class="chip">' + k + '</span>').join('') + 
+                                        '</div>';
+                                } else {
+                                    aiResultKeywords.textContent = result.keywords || '未识别到关键词';
+                                }
+                                // 显示完成标签
+                                if (aiAnalysisComplete) {
+                                    aiAnalysisComplete.style.display = 'inline';
+                                }
+                            } else {
+                                // 如果无法解析 JSON，显示原始分析结果
+                                aiResultTime.textContent = '分析完成';
+                                aiResultCharacters.textContent = data.ai_analysis.substring(0, 100) + '...';
+                                aiResultMain.textContent = '请查看完整分析';
+                                aiResultBackground.textContent = '';
+                                aiResultKeywords.textContent = '';
+                                // 显示完成标签
+                                if (aiAnalysisComplete) {
+                                    aiAnalysisComplete.style.display = 'inline';
+                                }
+                            }
+                        } catch (e) {
+                            console.error('解析JSON失败:', e);
+                            aiResultTime.textContent = '解析失败';
+                            aiResultCharacters.textContent = data.ai_analysis.substring(0, 100) + '...';
+                        }
+                    } else {
+                        aiResultTime.textContent = '未识别到时间';
+                        aiResultCharacters.textContent = '未识别到人物/国家';
+                        aiResultMain.textContent = '未识别到核心主张';
+                        aiResultBackground.textContent = '未识别到背景信息';
+                        aiResultKeywords.textContent = '未识别到关键词';
+                    }
+                })
+                .catch(error => {
+                    console.error('AI分析失败:', error);
+                    aiResultTime.textContent = '分析失败';
+                    aiResultCharacters.textContent = '分析失败';
+                    aiResultMain.textContent = '分析失败';
+                    aiResultBackground.textContent = '分析失败';
+                    aiResultKeywords.textContent = '分析失败';
+                });
+            } else if (file.type.startsWith('text/') || fileExtension === 'txt') {
+                // TXT 文件：读取内容，插入到 prompt 中，发送到 /chat
+                const reader = new FileReader();
+                reader.readAsText(file);
+                reader.onload = (event) => {
+                    const textContent = event.target.result;
+                    const prompt = promptTemplate.replace('[PAPER_CONTENT]', textContent);
+                    
+                    console.log('Sending TXT to /chat');
+                    
+                    fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message: prompt })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Received data:', data);
+                        if (data.response) {
+                            // 尝试从响应中提取 JSON 数据
+                            try {
+                                const jsonMatch = data.response.match(/\{[\s\S]*?\}/);
+                                if (jsonMatch) {
+                                    const result = JSON.parse(jsonMatch[0]);
+                                    aiResultTime.textContent = result.time || '未识别到时间';
+                                    aiResultCharacters.textContent = result.entities || '未识别到人物/国家';
+                                    aiResultMain.textContent = result.main_idea || '未识别到核心主张';
+                                    aiResultBackground.textContent = result.background || '未识别到背景信息';
+                                    if (result.keywords && Array.isArray(result.keywords)) {
+                                        aiResultKeywords.innerHTML = '<div class="chip-row">' + 
+                                            result.keywords.map(k => '<span class="chip">' + k + '</span>').join('') + 
+                                            '</div>';
+                                    } else {
+                                        aiResultKeywords.textContent = result.keywords || '未识别到关键词';
+                                    }
+                                    // 显示完成标签
+                                    if (aiAnalysisComplete) {
+                                        aiAnalysisComplete.style.display = 'inline';
+                                    }
+                                } else {
+                                    // 如果无法解析 JSON，显示原始分析结果
+                                    aiResultTime.textContent = '分析完成';
+                                    aiResultCharacters.textContent = data.response.substring(0, 100) + '...';
+                                    aiResultMain.textContent = '请查看完整分析';
+                                    aiResultBackground.textContent = '';
+                                    aiResultKeywords.textContent = '';
+                                    // 显示完成标签
+                                    if (aiAnalysisComplete) {
+                                        aiAnalysisComplete.style.display = 'inline';
+                                    }
+                                }
+                            } catch (e) {
+                                console.error('解析JSON失败:', e);
+                                aiResultTime.textContent = '解析失败';
+                                aiResultCharacters.textContent = data.response.substring(0, 100) + '...';
+                            }
+                        } else {
+                            aiResultTime.textContent = '分析失败';
+                            aiResultCharacters.textContent = '未识别到人物/国家';
+                            aiResultMain.textContent = '未识别到核心主张';
+                            aiResultBackground.textContent = '未识别到背景信息';
+                            aiResultKeywords.textContent = '未识别到关键词';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('AI分析失败:', error);
+                        aiResultTime.textContent = '分析失败';
+                        aiResultCharacters.textContent = '分析失败';
+                        aiResultMain.textContent = '分析失败';
+                        aiResultBackground.textContent = '分析失败';
+                        aiResultKeywords.textContent = '分析失败';
+                    });
+                };
+            } else if (file.type.startsWith('image/')) {
+                // 图片文件：读取为 data URL，发送到 /analyze-image
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const imageUrl = event.target.result;
+                    const prompt = `这个 Prompt 的重点是 结构化提取 ，既要准确，又要简洁，方便学生后续做对比。 
+# Role: 初中历史教研组长（速读分析官）
+  
+# Task:
+对输入的【原始史料图片】进行快速分析，提取核心信息，为初中生提供一个阅读基准。
+  
+# Constraints:
+1. **语言风格**：简明扼要，适合初中生阅读。
+2. **准确度要求**：必须严谨，不得捏造史料中未提及的信息。
+3. **关键维度**：按时间、人物/国家、核心主张、背景信息、关键词五个维度提取。
+  
+# Output Format (JSON):
+{ 
+  "time": "例如：1884年 / 清末",
+  "entities": "例如：清政府、法国",
+  "main_idea": "用一句话概括史料的核心内容...",
+  "background": "简述该史料相关的历史背景（如：中法战争后）...",
+  "keywords": ["关键词1", "关键词2", "关键词3"]
+}`;
+                    
+                    console.log('Sending image to /analyze-image');
+                    
+                    fetch('/analyze-image', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            image_url: imageUrl,
+                            prompt: prompt
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Received data:', data);
+                        if (data.response) {
+                            // 尝试从响应中提取 JSON 数据
+                            try {
+                                const jsonMatch = data.response.match(/\{[\s\S]*?\}/);
+                                if (jsonMatch) {
+                                    const result = JSON.parse(jsonMatch[0]);
+                                    aiResultTime.textContent = result.time || '未识别到时间';
+                                    aiResultCharacters.textContent = result.entities || '未识别到人物/国家';
+                                    aiResultMain.textContent = result.main_idea || '未识别到核心主张';
+                                    aiResultBackground.textContent = result.background || '未识别到背景信息';
+                                    if (result.keywords && Array.isArray(result.keywords)) {
+                                        aiResultKeywords.innerHTML = '<div class="chip-row">' + 
+                                            result.keywords.map(k => '<span class="chip">' + k + '</span>').join('') + 
+                                            '</div>';
+                                    } else {
+                                        aiResultKeywords.textContent = result.keywords || '未识别到关键词';
+                                    }
+                                    // 显示完成标签
+                                    if (aiAnalysisComplete) {
+                                        aiAnalysisComplete.style.display = 'inline';
+                                    }
+                                } else {
+                                    // 如果无法解析 JSON，显示原始分析结果
+                                    aiResultTime.textContent = '分析完成';
+                                    aiResultCharacters.textContent = data.response.substring(0, 100) + '...';
+                                    aiResultMain.textContent = '请查看完整分析';
+                                    aiResultBackground.textContent = '';
+                                    aiResultKeywords.textContent = '';
+                                    // 显示完成标签
+                                    if (aiAnalysisComplete) {
+                                        aiAnalysisComplete.style.display = 'inline';
+                                    }
+                                }
+                            } catch (e) {
+                                console.error('解析JSON失败:', e);
+                                aiResultTime.textContent = '解析失败';
+                                aiResultCharacters.textContent = data.response.substring(0, 100) + '...';
+                            }
+                        } else {
+                            aiResultTime.textContent = '分析失败';
+                            aiResultCharacters.textContent = '未识别到人物/国家';
+                            aiResultMain.textContent = '未识别到核心主张';
+                            aiResultBackground.textContent = '未识别到背景信息';
+                            aiResultKeywords.textContent = '未识别到关键词';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('AI分析失败:', error);
+                        aiResultTime.textContent = '分析失败';
+                        aiResultCharacters.textContent = '分析失败';
+                        aiResultMain.textContent = '分析失败';
+                        aiResultBackground.textContent = '分析失败';
+                        aiResultKeywords.textContent = '分析失败';
+                    });
+                };
+            } else {
+                // 不支持的文件类型
+                aiResultTime.textContent = '不支持';
+                aiResultCharacters.textContent = '文件类型';
+                aiResultMain.textContent = '请上传 PDF、TXT 或图片文件';
+                aiResultBackground.textContent = '';
+                aiResultKeywords.textContent = '';
+                alert('仅支持 PDF、TXT 和图片文件');
+            }
+        }
+        
+        // 使用 PDF.js 渲染 PDF 文件
+        function renderPDF(pdfData, container) {
+            // 清空容器
+            container.innerHTML = '<div style="text-align:center;padding:20px;">正在加载PDF...</div>';
+            
+            // 使用 PDF.js 打开 PDF
+            pdfjsLib.getDocument({ data: pdfData }).promise.then(function(pdf) {
+                // 获取第一页
+                return pdf.getPage(1);
+            }).then(function(page) {
+                // 创建 canvas 元素
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // 设置缩放比例
+                const scale = 1.5;
+                const viewport = page.getViewport({ scale: scale });
+                
+                // 设置 canvas 尺寸
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                canvas.style.maxWidth = '100%';
+                canvas.style.height = 'auto';
+                canvas.style.borderRadius = '8px';
+                canvas.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+                
+                // 渲染页面
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+                
+                page.render(renderContext).promise.then(function() {
+                    // 清空容器并显示 canvas
+                    container.innerHTML = '';
+                    container.appendChild(canvas);
+                    
+                    // 添加提示信息
+                    const hint = document.createElement('p');
+                    hint.style.fontSize = '12px';
+                    hint.style.color = '#999';
+                    hint.style.textAlign = 'center';
+                    hint.style.marginTop = '10px';
+                    hint.textContent = '仅显示PDF第一页预览';
+                    container.appendChild(hint);
+                });
+            }).catch(function(error) {
+                console.error('PDF加载失败:', error);
+                container.innerHTML = '<p style="color:#f44336;text-align:center;">PDF文件加载失败，请确保文件格式正确。</p>';
+            });
+        }
     </script>
     
     <style>
