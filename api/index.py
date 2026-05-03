@@ -105,7 +105,6 @@ def chat():
 @app.route('/upload', methods=['POST'])
 def upload():
     try:
-        # 1. 校验文件是否存在
         if 'file' not in request.files:
             return jsonify({"message": "No file part"}), 400
 
@@ -113,112 +112,61 @@ def upload():
         if file.filename == '':
             return jsonify({"message": "No selected file"}), 400
 
-        # 2. 只允许PDF
         if not file.filename.lower().endswith('.pdf'):
             return jsonify({"message": "请上传 PDF 文件"}), 400
 
-        # 3. 保存文件到本地
-        uploads_dir = os.path.join(app.root_path, "uploads")
-        os.makedirs(uploads_dir, exist_ok=True)
+        # ⚠️ Vercel: use /tmp (writable)
+        uploads_dir = "/tmp"
         file_path = os.path.join(uploads_dir, file.filename)
         file.save(file_path)
 
-        # 4. 调用豆包分析 PDF
         analysis = analyze_pdf(file_path, "请分析这个PDF文件")
 
         return jsonify({
-            "message": f"文件 {file.filename} 上传并分析成功",
+            "message": f"{file.filename} 上传并分析成功",
             "ai_analysis": analysis
         })
 
     except Exception as e:
-        return jsonify({"error": f"服务器错误：{str(e)}"}), 500
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
     try:
-        # 1. 校验文件是否存在
-        print(request.files)
         if 'file' not in request.files:
             return jsonify({"message": "No file part"}), 400
 
-        # 2. 获取所有文件 (支持多个文件)
         files = request.files.getlist('file')
-        if not files:
-            return jsonify({"message": "No selected files"}), 400
+        task = request.form.get('task', '请分析这些PDF文件')
 
-        # 3. 只允许PDF
+        results = []
+
         for file in files:
             if not file.filename.lower().endswith('.pdf'):
                 return jsonify({"message": "请上传 PDF 文件"}), 400
 
-        # 4. 获取任务描述
-        task = request.form.get('task', '请分析这个PDF文件')
-        print(files, task)
-        # 5. 保存文件到本地并分析
-        uploads_dir = os.path.join(app.root_path, "uploads")
-        os.makedirs(uploads_dir, exist_ok=True)
-
-        analysis_results = []
-        for file in files:
-            file_path = os.path.join(uploads_dir, file.filename)
+            file_path = os.path.join("/tmp", file.filename)
             file.save(file_path)
-            
-            # 调用豆包分析 PDF
-            analysis = analyze_pdf(file_path, task)
-            print("查看分析结果：", analysis)
 
-            analysis_results.append({
+            analysis = analyze_pdf(file_path, task)
+
+            results.append({
                 "filename": file.filename,
                 "analysis": analysis
             })
 
-        # 生成综合分析结果
-        combined_analysis = """
-# PDF文件分析结果
-
-"""
-        for result in analysis_results:
-            combined_analysis += f"## {result['filename']}\n{result['analysis']}\n\n"
-
-        # 检查分析结果是否包含有效的JSON字符串
-        import json
-        import re
-        
-        # 尝试从分析结果中提取JSON
-        quiz_data = []
-        
-        # 查找可能的JSON开始位置
-        json_start = combined_analysis.find('[')
-        if json_start != -1:
-            # 尝试从找到的位置开始解析
-            try:
-                # 提取从JSON开始到字符串结束的部分
-                json_candidate = combined_analysis[json_start:]
-                # 尝试解析
-                parsed_json = json.loads(json_candidate)
-                quiz_data = parsed_json
-                print("Found and parsed JSON from analysis")
-            except json.JSONDecodeError:
-                print("Failed to parse JSON from analysis")
-                print(combined_analysis)
-        else:
-            print("No JSON found in analysis")
-        
-        # 保存quiz-data.json
-        quiz_data_path = os.path.join(app.root_path, "quiz-data.json")
-        with open(quiz_data_path, 'w', encoding='utf-8') as f:
-            json.dump(quiz_data, f, ensure_ascii=False, indent=2)
-        print(f"Saved quiz data to {quiz_data_path}")
+        combined = "# PDF分析结果\n\n"
+        for r in results:
+            combined += f"## {r['filename']}\n{r['analysis']}\n\n"
 
         return jsonify({
             "message": f"{len(files)} 个文件分析完成",
-            "ai_analysis": combined_analysis
+            "ai_analysis": combined
         })
 
     except Exception as e:
-        return jsonify({"error": f"服务器错误：{str(e)}"}), 500
-
+        return jsonify({"error": str(e)}), 500
+        
 @app.route('/analyze-image', methods=['POST'])
 def analyze_image():
     try:
